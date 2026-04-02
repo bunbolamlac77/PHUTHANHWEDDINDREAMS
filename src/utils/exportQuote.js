@@ -7,7 +7,7 @@ export async function exportQuoteAsImage(elementId = 'quote-export-node') {
   const canvas = await html2canvas(node, {
     scale: 2,
     useCORS: true,
-    backgroundColor: '#1E1E1E',
+    backgroundColor: '#0B1410',
     logging: false,
   });
 

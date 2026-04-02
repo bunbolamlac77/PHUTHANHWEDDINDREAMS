@@ -6,7 +6,6 @@ export default function BottomSheet({ isOpen, onClose, title, children }) {
   const sheetRef = useRef(null);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     if (isOpen) setCurrentY(0);
   }, [isOpen]);
 

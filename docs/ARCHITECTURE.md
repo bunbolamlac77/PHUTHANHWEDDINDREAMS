@@ -48,8 +48,8 @@
   "description": "Quản lý Show & Tạo Báo Giá Nhiếp Ảnh",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#121212",
-  "background_color": "#121212",
+  "theme_color": "#0B1410",
+  "background_color": "#0B1410",
   "start_url": "/",
   "scope": "/",
   "icons": [
@@ -226,7 +226,7 @@ User ấn "📸 Xuất Ảnh"
 html2canvas(document.getElementById('quote-export-node'), {
   scale: 2,              // Retina quality
   useCORS: true,
-  backgroundColor: '#1E1E1E'
+  backgroundColor: '#162620'
 })
        │
        ▼
