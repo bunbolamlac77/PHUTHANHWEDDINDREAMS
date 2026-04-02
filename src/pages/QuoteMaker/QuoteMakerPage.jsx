@@ -90,13 +90,13 @@ export default function QuoteMakerPage() {
 
   return (
     <div className="pb-[130px]">
-      <div className="p-4 flex items-center gap-3">
+      <div className="p-4 flex items-center gap-3.5">
         {settings.studioLogo ? (
-           <img src={settings.studioLogo} alt="Logo" className="w-[40px] h-[40px] rounded-full object-cover border border-pt-gold" />
+           <img src={settings.studioLogo} alt="Logo" className="w-[48px] h-[48px] rounded-full object-cover border-2 border-pt-gold ring-2 ring-pt-gold/20" />
         ) : (
-           <div className="w-[40px] h-[40px] rounded-full border flex items-center justify-center text-pt-gold font-serif">PT</div>
+           <img src="/icons/moi-trongtrang.png" alt="Logo" className="w-[48px] h-[48px] object-contain drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]" />
         )}
-        <h1 className="text-display font-heading text-pt-gold tracking-wide">Tạo Báo Giá</h1>
+        <h1 className="text-[24px] font-heading text-pt-gold tracking-wider uppercase font-extrabold">Tạo Báo Giá</h1>
       </div>
 
       <QuoteForm 
