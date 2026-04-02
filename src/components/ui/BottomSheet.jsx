@@ -26,7 +26,7 @@ export default function BottomSheet({ isOpen, onClose, title, children }) {
       <div className="absolute inset-0 bg-black/70 overlay visible" onClick={onClose} />
       <div 
         ref={sheetRef}
-        className="relative bg-pt-surface/95 backdrop-blur-xl border border-pt-text/10 w-full max-w-sm mx-auto h-[70dvh] rounded-t-[20px] flex flex-col animate-sheet-up shadow-[0_-20px_50px_rgba(0,0,0,0.6)]"
+        className="relative bg-pt-surface/95 backdrop-blur-xl border border-pt-text/10 w-full max-w-md mx-auto h-[85dvh] rounded-t-[20px] flex flex-col animate-sheet-up shadow-[0_-20px_50px_rgba(0,0,0,0.6)]"
         style={{ transform: `translateY(${currentY}px)`, transition: currentY > 0 ? 'none' : 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)' }}
       >
         <div 

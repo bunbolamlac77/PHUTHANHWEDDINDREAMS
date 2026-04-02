@@ -39,14 +39,26 @@ export default function ShowDetailSheet({ show, isOpen, onClose }) {
   };
 
   const syncStatus = (field, val) => {
-    const newStatus = { isDeposited, isShot, isFullyPaid, isDelivered, [field]: val };
+    let newStatus = { isDeposited, isShot, isFullyPaid, isDelivered, [field]: val };
     
-    // Auto sync logic: if fully paid, deposit must be true.
-    if (field === 'isFullyPaid' && val) newStatus.isDeposited = true;
+    // Auto-check previous steps logic
+    if (field === 'isDelivered' && val) {
+      newStatus.isDeposited = true;
+      newStatus.isShot = true;
+      newStatus.isFullyPaid = true;
+    } else if (field === 'isFullyPaid' && val) {
+      newStatus.isDeposited = true;
+    }
     
+    // Update local state to match newStatus immediately for better UX
+    setIsDeposited(newStatus.isDeposited);
+    setIsShot(newStatus.isShot);
+    setIsFullyPaid(newStatus.isFullyPaid);
+    setIsDelivered(newStatus.isDelivered);
+
     saveChanges({ 
        status: newStatus, 
-       depositAmount: (field === 'isFullyPaid' && val) ? show.finalAmount : ((field === 'isDeposited' && !val) ? 0 : currentDeposit)
+       depositAmount: (newStatus.isFullyPaid) ? show.finalAmount : ((field === 'isDeposited' && !val) ? 0 : currentDeposit)
     });
   };
 
@@ -103,6 +115,7 @@ export default function ShowDetailSheet({ show, isOpen, onClose }) {
               checked={isDeposited} 
               onChange={val => { setIsDeposited(val); syncStatus('isDeposited', val); }} 
               label="1. Xác nhận khách Đã Cọc" 
+              disabled={isShot || isFullyPaid || isDelivered}
             />
             {isDeposited && !isFullyPaid && (
               <div className="pl-11 pr-2 pb-2">
@@ -112,14 +125,28 @@ export default function ShowDetailSheet({ show, isOpen, onClose }) {
           </div>
 
           <div className="space-y-2 bg-[rgba(22,38,32,0.5)] p-3 rounded-xl border border-pt-text/5">
-            <CustomCheckbox checked={isShot} onChange={val => { setIsShot(val); syncStatus('isShot', val); }} label="2. Hoàn tất Bấm Máy (Đã chụp)" />
-            <CustomCheckbox checked={isFullyPaid} onChange={val => { setIsFullyPaid(val); syncStatus('isFullyPaid', val); }} label="3. Đã nhận đủ tiền (100%)" />
-            <CustomCheckbox checked={isDelivered} onChange={val => { setIsDelivered(val); syncStatus('isDelivered', val); }} label="4. Đã giao toàn bộ File/Ảnh" />
+            <CustomCheckbox 
+              checked={isShot} 
+              onChange={val => { setIsShot(val); syncStatus('isShot', val); }} 
+              label="2. Hoàn tất Bấm Máy (Đã chụp)" 
+              disabled={isFullyPaid || isDelivered}
+            />
+            <CustomCheckbox 
+              checked={isFullyPaid} 
+              onChange={val => { setIsFullyPaid(val); syncStatus('isFullyPaid', val); }} 
+              label="3. Đã nhận đủ tiền (100%)" 
+              disabled={isDelivered}
+            />
+            <CustomCheckbox 
+              checked={isDelivered} 
+              onChange={val => { setIsDelivered(val); syncStatus('isDelivered', val); }} 
+              label="4. Đã giao toàn bộ File/Ảnh" 
+            />
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="pt-6 pb-2">
+        {/* Actions - Added bottom margin to avoid clipping */}
+        <div className="pt-6 pb-12">
           <button onClick={handleDelete} className="w-full py-4 text-red-400 font-bold active:scale-95 transition-transform bg-red-400/10 rounded-xl border border-red-400/20">
             HỦY DỮ LIỆU SHOW NÀY
           </button>

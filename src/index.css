@@ -46,7 +46,7 @@ body {
   flex-direction: column;
   padding-top: var(--safe-top);
   padding-bottom: calc(var(--safe-bottom) + 60px); 
-  max-width: 430px;
+  max-width: 480px;
   min-height: 100dvh;
   margin: 0 auto;
   position: relative;
