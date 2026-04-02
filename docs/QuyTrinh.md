@@ -136,9 +136,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'pt-base':       '#121212',
-        'pt-surface':    '#1E1E1E',
-        'pt-elevated':   '#2A2A2A',
+        'pt-base':       '#0B1410',
+        'pt-surface':    '#162620',
+        'pt-elevated':   '#2A3530',
         'pt-gold':       '#D4AF37',
         'pt-gold-bright':'#F5C518',
         'pt-text':       '#FFFFFF',
@@ -193,7 +193,7 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #121212;
+  background-color: #0B1410;
   color: #FFFFFF;
   font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -254,8 +254,8 @@ export default defineConfig({
         name: 'PhuThanh Wedding Dreams',
         short_name: 'PT Dreams',
         description: 'Quản lý Show & Tạo Báo Giá Nhiếp Ảnh',
-        theme_color: '#121212',
-        background_color: '#121212',
+        theme_color: '#0B1410',
+        background_color: '#0B1410',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
@@ -297,7 +297,7 @@ export default defineConfig({
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
   
   <!-- Theme Color -->
-  <meta name="theme-color" content="#121212" />
+  <meta name="theme-color" content="#0B1410" />
   
   <!-- SEO -->
   <title>PhuThanh Wedding Dreams – Quản Lý Show & Báo Giá</title>
@@ -440,7 +440,7 @@ export async function exportQuoteAsImage(elementId = 'quote-export-node') {
   const canvas = await html2canvas(node, {
     scale: 2,
     useCORS: true,
-    backgroundColor: '#1E1E1E',
+    backgroundColor: '#162620',
     logging: false,
   });
 
@@ -1058,7 +1058,7 @@ Object.keys(localStorage).forEach(k =>
 
 ### Checklist Design
 - [ ] Font Be Vietnam Pro load đúng
-- [ ] Màu nền #121212 (không bị trắng viền)
+- [ ] Màu nền #0B1410 (không bị trắng viền)
 - [ ] Màu vàng #D4AF37 cho CTA
 - [ ] active:scale-95 trên mọi button
 - [ ] Bottom Sheet slide-up animation mượt

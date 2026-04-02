@@ -1,121 +1,103 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState } from 'react';
+import BottomTabBar from './components/layout/BottomTabBar';
+import SafeAreaWrapper from './components/layout/SafeAreaWrapper';
+import Toast from './components/ui/Toast';
+import CustomCheckbox from './components/ui/CustomCheckbox';
+import StatusBadge from './components/ui/StatusBadge';
+import FilterPills from './components/ui/FilterPills';
+import Modal from './components/ui/Modal';
+import BottomSheet from './components/ui/BottomSheet';
+import CurrencyInput from './components/shared/CurrencyInput';
+import ImageUploader from './components/shared/ImageUploader';
+import { useAppContext } from './context/AppContext';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [activeTab, setActiveTab] = useState('quote');
+  const [toastVisible, setToastVisible] = useState(false);
+  const [checkboxChecked, setCheckboxChecked] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [currency, setCurrency] = useState('');
+  const [img, setImg] = useState('');
+  const [filter, setFilter] = useState('all');
+
+  const { settings } = useAppContext();
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <SafeAreaWrapper>
+        <div className="p-4 space-y-8 pb-[100px]">
+          <div className="text-center">
+            <h1 className="text-display font-heading text-pt-gold">Phase 3: Core UI</h1>
+            <p className="text-pt-muted mt-1">{settings.studioName}</p>
+          </div>
 
-      <div className="ticks"></div>
+          <div className="space-y-4">
+            <h2 className="text-title font-heading text-pt-text">1. Buttons & Toast</h2>
+            <button className="bg-pt-gold text-black font-bold px-6 py-4 rounded-2xl active:scale-95 transition-transform w-full" onClick={() => setToastVisible(true)}>
+              Hiển thị Toast Báo Lỗi/Thành Công
+            </button>
+            <Toast message="Hành động đã được lưu thành công!" visible={toastVisible} onClose={() => setToastVisible(false)} />
+          </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+          <div className="space-y-4">
+            <h2 className="text-title font-heading text-pt-text">2. Forms & Inputs</h2>
+            <CurrencyInput value={currency} onChange={setCurrency} placeholder="Nhập số tiền..." />
+            <CustomCheckbox checked={checkboxChecked} onChange={setCheckboxChecked} label="Đã bàn giao toàn bộ File" />
+            <div className="flex items-center gap-4">
+              <ImageUploader imageUrl={img} onImageSelect={setImg} />
+              <p className="text-caption text-pt-muted">Upload ảnh sẽ được tự động nén dung lượng ở Client-Side.</p>
+            </div>
+          </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+          <div className="space-y-4">
+            <h2 className="text-title font-heading text-pt-text">3. Badges, Pills & Typography</h2>
+            <div className="flex gap-2 mb-2">
+              <StatusBadge status={{}} />
+              <StatusBadge status={{ isDeposited: true }} />
+              <StatusBadge status={{ isShot: true }} />
+              <StatusBadge status={{ isDelivered: true }} />
+            </div>
+            <FilterPills 
+              options={[
+                {id: 'all', label: 'Tất cả'}, 
+                {id: 'deposited', label: 'Đã cọc'},
+                {id: 'shot', label: 'Đã chụp'}
+              ]}
+              activeId={filter}
+              onChange={setFilter}
+            />
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-title font-heading text-pt-text">4. Modals & Overlays</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <button className="border-2 border-pt-gold text-pt-gold font-bold py-4 rounded-2xl active:scale-95 transition-transform" onClick={() => setModalOpen(true)}>
+                Mở Modal
+              </button>
+              <button className="bg-pt-surface border border-pt-text/10 text-pt-text font-bold py-4 rounded-2xl active:scale-95 transition-transform" onClick={() => setSheetOpen(true)}>
+                Mở Sheet
+              </button>
+            </div>
+          </div>
+        </div>
+      </SafeAreaWrapper>
+
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Test Center Modal">
+        <p className="text-pt-muted text-body leading-relaxed">Đây là nội dung popup Modal ở GĐ3. Được dùng cho các form nhỏ gọn như Thêm mới Dịch Vụ, hoặc Validate logic ngắn.</p>
+        <button onClick={() => setModalOpen(false)} className="mt-6 w-full py-4 rounded-xl bg-pt-gold text-black font-bold active:scale-95 transition-transform">Đóng Modal</button>
+      </Modal>
+
+      <BottomSheet isOpen={sheetOpen} onClose={() => setSheetOpen(false)} title="Bottom Sheet">
+        <p className="text-pt-muted text-body leading-relaxed">Đây là Bottom Sheet 70% height dành cho Mobile. Vuốt nhẹ thanh ngang bên trên xuống để đóng, hoặc click ra ngoài Overlay để tắt.</p>
+        <div className="h-[500px] mt-4 flex items-center justify-center border-2 border-dashed border-white/10 rounded-xl text-white/20">
+          Scrollable Content...
+        </div>
+      </BottomSheet>
+
+      <BottomTabBar activeTab={activeTab} onChange={setActiveTab} />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
