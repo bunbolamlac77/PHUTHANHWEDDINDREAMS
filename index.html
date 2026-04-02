@@ -1,13 +1,34 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>temp_vite_app</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  
+  <!-- PWA iOS Tags – BẮT BUỘC -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="PT Dreams" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#121212" />
+  
+  <!-- SEO -->
+  <title>PhuThanh Wedding Dreams – Quản Lý Show & Báo Giá</title>
+  <meta name="description" content="Ứng dụng quản lý show chụp ảnh và tạo báo giá chuyên nghiệp cho studio PhuThanh Wedding Dreams" />
+  
+  <link rel="icon" type="image/png" href="/icons/icon-192.png" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+
+  <!-- Script xử lý keyboard iOS -->
+  <script>
+    window.visualViewport?.addEventListener('resize', () => {
+      const keyboardVisible = window.visualViewport.height < window.innerHeight * 0.75;
+      document.body.classList.toggle('keyboard-open', keyboardVisible);
+    });
+  </script>
+</body>
 </html>
