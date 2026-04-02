@@ -277,18 +277,18 @@ Lưu Base64 vào LocalStorage[phuthanh_settings.studioLogo]
 ```bash
 npm install
 npm run dev
-# Mở http://localhost:5173 trên Safari (macOS) hoặc dùng ngrok để test iPhone thật
+# Mở http://localhost:5173 trên Safari (macOS) hoặc dùng Vercel Preview để test iPhone thật
 ```
 
 ### Build Production
 ```bash
 npm run build
-# Output: /dist - có thể serve bằng Vite Preview hoặc deploy lên Netlify/Vercel
+# Output: /dist - có thể serve bằng Vite Preview hoặc deploy lên Vercel
 npm run preview
 ```
 
 ### Test PWA trên iPhone thật
-1. Host file `dist/` lên HTTPS (Netlify free tier).
+1. Host thư mục `dist/` lên HTTPS (Vercel free tier).
 2. Mở Safari trên iPhone, nhập URL.
 3. Tap biểu tượng Chia Sẻ → "Thêm vào Màn hình chính".
 4. App biến thành native-like với icon và standalone mode.

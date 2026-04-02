@@ -723,25 +723,33 @@ npm run preview
 # App chạy ở http://localhost:4173
 ```
 
-### Bước 5.4 – Expose localhost ra internet để test iPhone
+### Bước 5.4 – Expose ra internet để test iPhone nhanh (Vercel Preview)
 
-Với Mac M1, dùng một trong hai cách:
+Cách nhanh nhất để test trên iPhone thật là dùng Vercel Preview. App sẽ được host với HTTPS miễn phí:
 
-**Cách 1: ngrok (đơn giản nhất)**
 ```bash
-# Cài ngrok nếu chưa có
-brew install ngrok
+# Cài Vercel CLI nếu chưa có
+npm install -g vercel
 
-# Tạo tunnel đến port dev
-ngrok http 5173
-# Nhận URL dạng: https://abc123.ngrok.io
+# Deploy bản preview nhanh
+vercel
+# 1. Log in (nếu lần đầu)
+# 2. Set up and deploy? Yes
+# 3. Which scope? [Tên của bạn]
+# 4. Link to existing project? No
+# 5. What's your project's name? phuthanh-wedding-dreams
+# 6. In which directory is your code located? ./
+# 7. No Framework Preset found. (Vercel tự nhận diện Vite)
+
+# Sau khi chạy xong, bạn sẽ nhận được 1 URL Preview dạng:
+# https://phuthanh-wedding-dreams-[hash]-username.vercel.app
 ```
 
-**Cách 2: Vite --host (cùng WiFi)**
+**Cách 2: Vite --host (Cùng mạng WiFi)**
 ```bash
 npm run dev -- --host
 # App chạy ở: http://192.168.x.x:5173
-# iPhone cùng WiFi có thể truy cập URL này
+# iPhone cùng WiFi truy cập URL này để test nhanh layout
 ```
 
 ---
@@ -840,45 +848,46 @@ const handleTouchEnd = (e) => {
 
 ## GIAI ĐOẠN 7: DEPLOY & CÀI LÊN HOME SCREEN IPHONE
 
-### Bước 7.1 – Deploy lên Netlify (Free Tier, HTTPS tự động)
+### Bước 7.1 – Deploy lên Vercel (Free Tier, HTTPS tự động)
 
-**Cách 1: Deploy qua Netlify CLI**
+**Cách 1: Deploy qua Vercel CLI (Nhanh nhất)**
 ```bash
-# Cài Netlify CLI
-npm install -g netlify-cli
+# Đảm bảo đã cài vercel cli
+npm install -g vercel
 
 # Build production
 npm run build
 
-# Deploy
-netlify deploy --prod --dir=dist
-# → Nhận URL: https://[tên-ngẫu-nhiên].netlify.app
+# Deploy bản chính thức (Production)
+vercel --prod
+# Chọn "dist" làm thư mục publish khi được hỏi (Hoặc cấu hình trong vercel.json)
 ```
 
-**Cách 2: Deploy qua GitHub + Netlify Web**
+**Cách 2: Deploy qua GitHub + Vercel Dashboard (Khuyên dùng)**
+1. Push code lên GitHub:
 ```bash
-# Push code lên GitHub
 git add .
 git commit -m "feat: hoàn thiện v1.0"
 git push origin main
 ```
-Sau đó vào https://netlify.com:
-1. "New site from Git" → chọn repo GitHub
-2. Build command: `npm run build`
-3. Publish directory: `dist`
-4. Deploy!
+2. Vào [Vercel Dashboard](https://vercel.com/new):
+   - Nhập repository từ GitHub.
+   - Framework Preset: **Vite**.
+   - Build Command: `npm run build`.
+   - Output Directory: `dist`.
+   - Bấm **Deploy**.
 
-### Bước 7.2 – Cấu hình domain tuỳ chọn (không bắt buộc)
+### Bước 7.2 – Cấu hình Domain & PWA Ready
 
-Trong Netlify Dashboard → Domain settings:
-- Có thể đặt tên site: `phuthanh-dreams.netlify.app`
-- Hoặc mua domain riêng và connect (không cần thiết cho app cá nhân)
+Trong Vercel Project Settings → Domains:
+- Bạn có thể đổi tên miền thành: `phuthanh-dreams.vercel.app`.
+- Vercel tự động cấp chứng chỉ SSL (HTTPS), đây là điều kiện BẮT BUỘC để PWA hoạt động trên iOS.
 
 ### Bước 7.3 – Cài PWA lên iPhone 14 Pro Max
 
 **Thực hiện trên iPhone:**
 1. Mở **Safari** (không dùng Chrome/Firefox – chỉ Safari mới hỗ trợ PWA iOS)
-2. Nhập URL Netlify: `https://phuthanh-dreams.netlify.app`
+2. Nhập URL Vercel: `https://phuthanh-dreams.vercel.app`
 3. Chờ app load hoàn toàn lần đầu (Service Worker đang cache)
 4. Tap biểu tượng **Chia Sẻ** (hình vuông có mũi tên lên – dưới cùng Safari)
 5. Cuộn xuống → Tap **"Thêm vào Màn hình chính"**
@@ -908,14 +917,14 @@ Trong Netlify Dashboard → Domain settings:
 ```
 1. Đọc lại RULES.md trước khi code
 2. Tạo branch mới: git checkout -b feature/ten-tinh-nang
-3. Code & test trên localhost với ngrok trên iPhone
+3. Code & test với Vercel Preview (hoặc --host) trên iPhone
 4. Build: npm run build && npm run preview
 5. Test lại trên iPhone (standalone mode)
 6. Commit: git commit -m "feat: mô tả tính năng"
 7. Push: git push origin feature/...
 8. Merge vào main
-9. Netlify tự động deploy (nếu kết nối GitHub)
-10. Test trên iPhone thật với URL Netlify
+9. Vercel tự động deploy (nếu kết nối GitHub)
+10. Test trên iPhone thật với URL Vercel chính thức
 ```
 
 ### Bước 8.2 – Quy trình backup dữ liệu định kỳ
@@ -932,7 +941,7 @@ Trong Netlify Dashboard → Domain settings:
 
 **Tình huống:** Điện thoại reset, đổi điện thoại, hoặc Safari xóa storage:
 
-1. Cài app lại từ Safari (Add to Home Screen từ URL Netlify)
+1. Cài app lại từ Safari (Add to Home Screen từ URL Vercel)
 2. Mở app → Tab Cài Đặt → "Khôi Phục Dữ Liệu"
 3. Chọn file backup `.json` từ Files/iCloud
 4. Xác nhận 2 lần
@@ -971,7 +980,7 @@ console.log(`LocalStorage đang dùng: ${(total / 1024).toFixed(1)} KB`);
 | Ngày 4 | Sáng | Giai đoạn 4b: Module QuoteMaker hoàn chỉnh | Preview realtime, xuất ảnh |
 | Ngày 4 | Chiều | Giai đoạn 4c: Module ShowManager hoàn chỉnh | Filter, checklist, xóa show |
 | Ngày 5 | Sáng | Giai đoạn 5+6: PWA config + Test iPhone đầy đủ | Offline OK, tất cả checklist pass |
-| Ngày 5 | Chiều | Giai đoạn 7: Deploy Netlify + Add to Home Screen | App standalone trên iPhone |
+| Ngày 5 | Chiều | Giai đoạn 7: Deploy Vercel + Add to Home Screen | App standalone trên iPhone |
 
 ---
 
@@ -987,8 +996,8 @@ npm run build
 # Preview production build
 npm run preview
 
-# Expose localhost qua ngrok (test iPhone)
-ngrok http 5173
+# Expose nhanh qua Vercel (test iPhone)
+vercel
 
 # Kiểm tra size bundle
 npm run build && du -sh dist/
