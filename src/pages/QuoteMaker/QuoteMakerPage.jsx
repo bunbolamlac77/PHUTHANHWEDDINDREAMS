@@ -4,7 +4,7 @@ import QuoteForm from './QuoteForm';
 import QuotePreview from './QuotePreview';
 import Toast from '../../components/ui/Toast';
 import { exportQuoteAsImage } from '../../utils/exportQuote';
-import { Copy, Download, CheckCircle2 } from 'lucide-react';
+import { Share2, Download, CheckCircle2 } from 'lucide-react';
 
 export default function QuoteMakerPage() {
   const { settings, services, addShow } = useAppContext();
@@ -20,6 +20,23 @@ export default function QuoteMakerPage() {
   const [extraCosts, setExtraCosts] = useState([]); 
   const [depositAmountStr, setDepositAmountStr] = useState('');
   
+  const prevServiceCount = useRef(0);
+
+  // Auto-deposit logic
+  React.useEffect(() => {
+    const count = selectedServiceIds.length;
+    if (count !== prevServiceCount.current) {
+      if (count > 0) {
+        const autoDeposit = count * 500000;
+        // Định dạng thành chuỗi tiền tệ (có dấu .)
+        setDepositAmountStr(new Intl.NumberFormat('vi-VN').format(autoDeposit));
+      } else {
+        setDepositAmountStr('');
+      }
+      prevServiceCount.current = count;
+    }
+  }, [selectedServiceIds.length]);
+
   const [toastMessage, setToastMessage] = useState('');
   const previewRef = useRef(null);
 
@@ -57,17 +74,32 @@ export default function QuoteMakerPage() {
     }, 300);
   };
 
-  const handleCopyImage = async () => {
-    setToastMessage('Đang xử lý xuất ảnh...');
+  const handleShareImage = async () => {
+    setToastMessage('Đang chuẩn bị chia sẻ...');
     try {
       const file = await exportQuoteAsImage('quote-export-node');
-      await navigator.clipboard.write([
-        new window.ClipboardItem({ [file.type]: file })
-      ]);
-      setToastMessage('Đã Copy Báo giá. Sẵn sàng dán!');
+      
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Báo Giá Wedding Dreams',
+          text: `Gửi dâu rể báo giá từ Phu Thanh Wedding Dreams`
+        });
+        setToastMessage('Đã mở menu chia sẻ!');
+      } else {
+        // Fallback: Copy to clipboard if possible, or tell user to download
+        try {
+          await navigator.clipboard.write([
+            new window.ClipboardItem({ [file.type]: file })
+          ]);
+          setToastMessage('Đã Copy Báo giá vào Clipboard!');
+        } catch {
+          setToastMessage('Thiết bị không hỗ trợ chia sẻ trực tiếp. Vui lòng nhấn TẢI VỀ');
+        }
+      }
     } catch (error) {
-       console.error('Copy lỗi', error);
-       setToastMessage('Trình duyệt không hỗ trợ Copy. Vui lòng nhấn TẢI VỀ');
+       console.error('Lỗi chia sẻ', error);
+       setToastMessage('Lỗi khi chuẩn bị ảnh. Vui lòng thử lại');
     }
   };
 
@@ -91,12 +123,14 @@ export default function QuoteMakerPage() {
   return (
     <div className="pb-[130px]">
       <div className="p-4 flex items-center gap-3.5">
-        {settings.studioLogo ? (
-           <img src={settings.studioLogo} alt="Logo" className="w-[48px] h-[48px] rounded-full object-cover border-2 border-pt-gold ring-2 ring-pt-gold/20" />
-        ) : (
-           <img src="/icons/logo-original.png" alt="Logo" className="w-[48px] h-[48px] object-contain drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]" />
-        )}
-        <h1 className="text-[24px] font-heading text-pt-gold tracking-wider uppercase font-extrabold">Tạo Báo Giá</h1>
+        <div className="w-[52px] h-[52px] rounded-full border border-pt-gold/30 flex items-center justify-center bg-[#162620] shadow-[0_0_15px_rgba(212,175,55,0.1)] overflow-hidden shrink-0">
+          {settings.studioLogo ? (
+            <img src={settings.studioLogo} alt="Logo" className="w-full h-full object-cover" />
+          ) : (
+            <img src="/icons/moi-trongtrang.png" alt="Logo" className="w-[38px] h-[38px] object-contain" />
+          )}
+        </div>
+        <h1 className="text-[21px] font-heading text-pt-gold tracking-wider uppercase font-extrabold">Tạo Báo Giá</h1>
       </div>
 
       <QuoteForm 
@@ -131,13 +165,13 @@ export default function QuoteMakerPage() {
       {showExportOptions && (
         <div className="px-4 mt-6">
           <div className="bg-[#101A15] border border-[#D4AF37]/20 rounded-2xl p-5 shadow-lg space-y-4">
-             <div className="flex items-center gap-2 justify-center mb-2">
+              <div className="flex items-center gap-2 justify-center mb-2">
                 <CheckCircle2 className="text-[#10B981]" size={20} />
                 <h3 className="text-pt-gold font-bold text-[16px]">Bảng Giá Đã Sẵn Sàng</h3>
              </div>
              
-             <button onClick={handleCopyImage} className="w-full bg-[#162620] hover:bg-[#1E332A] border border-pt-gold/50 active:scale-95 transition-transform text-pt-gold font-bold text-[15px] rounded-xl py-3.5 flex items-center justify-center gap-2">
-                <Copy size={18} /> COPY ẢNH GỬI ZALO
+             <button onClick={handleShareImage} className="w-full bg-pt-gold hover:opacity-90 active:scale-95 transition-transform text-black font-bold text-[15px] rounded-xl py-3.5 flex items-center justify-center gap-2 shadow-[0_4px_15px_rgba(212,175,55,0.2)]">
+                <Share2 size={18} /> CHIA SẺ ẢNH (ZALO/FB)
              </button>
 
              <button onClick={handleDownloadImage} className="w-full bg-[#162620] hover:bg-[#1E332A] active:scale-[0.98] transition-transform text-pt-text font-bold text-[15px] rounded-xl py-3.5 flex items-center justify-center gap-2">

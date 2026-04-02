@@ -16,51 +16,54 @@ const QuotePreview = forwardRef(({ settings, customerName, eventDate, location, 
           // Không dùng gradient phức tạp để html2canvas không lỗi render
           backgroundColor: '#0B1410', 
           border: '1px solid rgba(212, 175, 55, 0.4)',
-          minHeight: '800px',
+          minHeight: '600px',
         }}
       >
         <div className="px-7 py-8 flex flex-col h-full font-sans">
           
           {/* 1. HEADER (Logo + Cty + Báo giá) */}
-          <div className="flex justify-between items-start mb-6">
-            <div className="flex items-center gap-4">
-              <img src="/icons/logo-original.png" alt="Logo" className="w-[70px] h-auto object-contain drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]" />
-              {/* Info Studio */}
-              <div>
-                 <h2 className="text-[#D4AF37] font-serif text-[18px] leading-tight font-medium uppercase tracking-wide">
-                   PHU THANH WEDDING<br/>DREAMS
-                 </h2>
-                 <div className="text-[#9CA3AF] text-[11px] mt-2 space-y-0.5">
-                   <p>Hotline/Zalo: {settings.studioPhone}</p>
-                   <p>Địa chỉ: {settings.studioAddress}</p>
-                 </div>
-              </div>
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-3 flex-1">
+               <div className="w-[48px] h-[48px] rounded-full border border-[#D4AF37]/40 flex items-center justify-center bg-[#162620] shrink-0 overflow-hidden">
+                  {settings.studioLogo ? (
+                    <img src={settings.studioLogo} alt="Logo" className="w-full h-full object-cover" />
+                  ) : (
+                    <img src="/icons/logo-original.png" alt="Logo" className="w-full h-full object-contain p-1.5" />
+                  )}
+               </div>
+               
+               <div className="flex flex-col ml-0.5">
+                  <h2 className="text-[#D4AF37] font-serif text-[15px] leading-tight font-medium uppercase tracking-[0.12em]">
+                    PHU THANH WEDDING<br/>DREAMS
+                  </h2>
+                  <div className="text-[#9CA3AF] text-[10px] mt-0.5 space-y-0.2 font-medium">
+                    <p>Hotline/Zalo: {settings.studioPhone || '076 481 6715'}</p>
+                    <p>Địa chỉ: {settings.studioAddress || 'Phường Tân Hạnh, Vĩnh Long'}</p>
+                  </div>
+               </div>
             </div>
-            {/* Chữ BÁO GIÁ cực to */}
-            <div className="text-right flex items-center h-full pt-1">
-              <span className="text-[#F3E9D2] font-serif text-[26px] uppercase leading-tight italic tracking-widest text-right">BÁO<br/>GIÁ</span>
-            </div>
-          </div>
 
-          <div style={{ height: '1px', backgroundColor: 'rgba(212, 175, 55, 0.3)', marginBottom: '24px' }}></div>
-
-          {/* 2. CUSTOMER BLOCK - Compact side by side info */}
-          <div className="flex justify-between items-end mb-6">
-            <div className="flex-1">
-              <h3 className="text-[#F3E9D2] font-serif text-[20px] mb-1">{customerName || 'Tên Khách Hàng'}</h3>
-              <div className="text-[#9CA3AF] text-[12px] font-medium flex gap-4 uppercase tracking-wider">
-                <span>Lễ cưới: {formatDateVN(eventDate)}</span>
-                {location && <span>• {location}</span>}
-              </div>
+            <div className="text-right">
+              <span className="text-[#F3E9D2] font-serif text-[24px] uppercase leading-[0.9] italic tracking-widest block">BÁO<br/>GIÁ</span>
             </div>
           </div>
 
-          <div style={{ height: '1px', backgroundColor: 'rgba(212, 175, 55, 0.3)', marginBottom: '20px' }}></div>
+          <div style={{ height: '1px', backgroundColor: 'rgba(212, 175, 55, 0.3)', marginBottom: '14px' }}></div>
+
+          {/* 2. CUSTOMER BLOCK */}
+          <div className="mb-4">
+            <h3 className="text-[#F3E9D2] font-serif text-[18px] mb-1">{customerName || 'Tên Khách Hàng'}</h3>
+            <div className="text-[#9CA3AF] text-[12px] font-medium">
+              <p>Ngày chụp: {formatDateVN(eventDate)} {location && <span className="opacity-60 ml-2">• {location}</span>}</p>
+            </div>
+          </div>
+
+          <div style={{ height: '1px', backgroundColor: 'rgba(212, 175, 55, 0.3)', marginBottom: '12px' }}></div>
 
           {/* MAIN TABLE: Services & Extra Costs - HORIZONTAL SCROLLABLE */}
-          <div className="mb-6">
-            <div className="opacity-80 border-b border-[#D4AF37]/10 pb-1.5 mb-2">
-              <span className="text-[#D4AF37] font-bold text-[10px] uppercase tracking-widest">Dịch vụ chi tiết</span>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-[#D4AF37] font-bold text-[11px] uppercase tracking-[0.2em]">DỊCH VỤ</span>
+              <span className="text-[#D4AF37] font-bold text-[11px] uppercase tracking-[0.2em]">THÀNH TIỀN</span>
             </div>
 
             {/* Wrapper cuộn ngang */}
@@ -88,10 +91,10 @@ const QuotePreview = forwardRef(({ settings, customerName, eventDate, location, 
                       <td style={{ padding: '7px 8px 7px 0', color: '#D4AF37', fontSize: '12px', fontWeight: 700, verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                         {idx + 1}.
                       </td>
-                      <td style={{ padding: '7px 16px 7px 8px', color: '#F3E9D2', fontSize: '14px', fontWeight: 500, verticalAlign: 'top', minWidth: '160px' }}>
+                      <td style={{ padding: '7px 16px 7px 8px', color: '#F3E9D2', fontSize: '13px', fontWeight: 500, verticalAlign: 'top', minWidth: '160px' }}>
                         {svc.name}
                       </td>
-                      <td style={{ padding: '7px 0 7px 16px', color: '#F3E9D2', fontSize: '14px', fontWeight: 700, textAlign: 'right', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '7px 0 7px 16px', color: '#F3E9D2', fontSize: '13px', fontWeight: 700, textAlign: 'right', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                         {formatCurrency(svc.price)}
                       </td>
                     </tr>
@@ -105,10 +108,10 @@ const QuotePreview = forwardRef(({ settings, customerName, eventDate, location, 
                         <td style={{ padding: '5px 8px 5px 0', color: '#9CA3AF', fontSize: '11px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                           ↳
                         </td>
-                        <td style={{ padding: '5px 16px 5px 8px', color: '#9CA3AF', fontSize: '13px', fontStyle: 'italic', verticalAlign: 'top', minWidth: '160px' }}>
+                        <td style={{ padding: '5px 16px 5px 8px', color: '#9CA3AF', fontSize: '12px', fontStyle: 'italic', verticalAlign: 'top', minWidth: '160px' }}>
                           {item.name || 'Phụ phí'}
                         </td>
-                        <td style={{ padding: '5px 0 5px 16px', color: '#9CA3AF', fontSize: '13px', fontStyle: 'italic', textAlign: 'right', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
+                        <td style={{ padding: '5px 0 5px 16px', color: '#9CA3AF', fontSize: '12px', fontStyle: 'italic', textAlign: 'right', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                           {formatCurrency(price)}
                         </td>
                       </tr>
@@ -117,63 +120,66 @@ const QuotePreview = forwardRef(({ settings, customerName, eventDate, location, 
                 </tbody>
               </table>
             </div>
+
+          {/* TOTAL BAR - Match sample style */}
+          <div className="mb-6 space-y-1.5">
+            <div className="flex justify-between items-center py-1.5 border-t border-[#D4AF37]/10 mt-2">
+               <span className="text-[#F3E9D2] text-[14px] font-bold uppercase tracking-tight">Tổng cộng</span>
+               <span className="text-[#F3E9D2] text-[16px] font-bold">{formatCurrency(finalAmount)}</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+               <span className="text-[#D4AF37] text-[12px] font-bold opacity-85">Cọc trước</span>
+               <span className="text-[#D4AF37] text-[13px] font-bold">{formatCurrency(depositAmount)}</span>
+            </div>
+
+            <div className="flex justify-between items-center pb-1">
+               <span className="text-[#9CA3AF] text-[12px] font-medium opacity-70">Còn lại</span>
+               <span className="text-[#9CA3AF] text-[13px] font-medium">{formatCurrency(remainingAmount)}</span>
+            </div>
           </div>
 
-          {/* TOTAL BAR - ULTRA HORIZONTAL (Khắc phục lỗi Tràn màn hình) */}
-          <div className="bg-[#162620] border border-[#D4AF37]/20 rounded-xl px-5 py-3.5 mb-8 flex justify-between items-center shadow-inner">
-             <div className="flex items-baseline gap-2">
-                <span className="text-[#9CA3AF] text-[11px] uppercase font-bold">Tổng:</span>
-                <span className="text-white text-[16px] font-bold">{formatCurrency(finalAmount)}</span>
-             </div>
-             
-             {depositAmount > 0 && (
-               <>
-                <div className="w-[1px] h-[20px] bg-[#D4AF37]/20 mx-2"></div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[#D4AF37] text-[11px] uppercase font-bold">Cọc:</span>
-                  <span className="text-[#D4AF37] text-[14px] font-bold">{formatCurrency(depositAmount)}</span>
-                </div>
-                <div className="w-[1px] h-[20px] bg-[#D4AF37]/20 mx-2"></div>
-                <div className="flex items-baseline gap-2 text-right">
-                  <span className="text-[#9CA3AF] text-[11px] uppercase font-bold">Còn:</span>
-                  <span className="text-white text-[14px] font-bold">{formatCurrency(remainingAmount)}</span>
-                </div>
-               </>
-             )}
-          </div>
-
-          {/* 5. DELIVERABLES (SẢN PHẨM NHẬN ĐƯỢC) - Rút gọn theo category */}
+          {/* 5. DELIVERABLES (SẢN PHẨM NHẬN ĐƯỢC) - Grid Layout */}
           <div className="flex-1">
-            <h4 style={{ color: '#D4AF37', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', borderBottom: '1px solid rgba(212,175,55,0.1)', paddingBottom: '6px', marginBottom: '10px' }}>
-              Sản phẩm nhận được
+            <h4 style={{ color: '#D4AF37', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
+              SẢN PHẨM NHẬN ĐƯỢC
             </h4>
-            <div style={{ display: 'grid', gridTemplateColumns: selectedServices.length > 1 ? 'repeat(2, 1fr)' : '1fr', gap: '12px 20px' }}>
+            
+            <div className={`grid ${selectedServices.length > 1 ? 'grid-cols-2' : 'grid-cols-1'} gap-x-8 gap-y-4`}>
               {selectedServices.map(svc => {
-                if (!svc.deliverables || svc.deliverables.length === 0) return null;
+                const rawDeliverables = svc.deliverables || [];
+                if (rawDeliverables.length === 0) return null;
 
-                // Lọc deliverables theo category
-                const isVideo = svc.category === 'video';
-                const filtered = svc.deliverables.filter(item => {
-                  if (isVideo) {
-                    // Gói quay: chỉ giữ dòng Phim và Tặng kèm
-                    return /phim|tặng kèm/i.test(item);
-                  } else {
-                    // Gói chụp: chỉ giữ dòng Album và Ảnh lớn/treo tường
-                    return /album|ảnh lớn|treo tường/i.test(item);
-                  }
+                // Flatten and clean items
+                const items = [];
+                rawDeliverables.forEach(d => {
+                  const parts = d.split(/[,;]/);
+                  parts.forEach(p => {
+                    // 1. Remove all emojis and non-standard symbols everywhere in the string
+                    // 2. Remove redundant prefixes (like "Sản phẩm nhận được:")
+                    const clean = p
+                      .replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '') // Emojis
+                      .replace(/^(Sản phẩm nhận được:|Sản phẩm:|Nhận được:|\s|[:.-])+/gi, '') // Prefixes at start
+                      .replace(/\s+/g, ' ') // Collapse spaces
+                      .trim();
+
+                    if (clean && /album|ảnh lớn|treo tường|phim|tặng kèm|tự tay chọn|usb|youtube/i.test(clean)) {
+                      items.push(clean.charAt(0).toUpperCase() + clean.slice(1));
+                    }
+                  });
                 });
 
-                if (filtered.length === 0) return null;
+                if (items.length === 0) return null;
 
                 return (
-                  <div key={svc.id}>
-                    <p style={{ color: '#F3E9D2', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase', marginBottom: '6px', lineHeight: 1.3 }}>
+                  <div key={svc.id} className="flex-1">
+                    <p style={{ color: '#F3E9D2', fontWeight: 700, fontSize: '13px', marginBottom: '6px', borderLeft: '2px solid #D4AF37', paddingLeft: '8px' }}>
                       {svc.name}:
                     </p>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      {filtered.map((item, i) => (
-                        <li key={i} style={{ color: '#9CA3AF', fontSize: '10.5px', lineHeight: 1.4, display: 'flex', alignItems: 'flex-start', gap: '5px' }}>
-                          <span style={{ color: '#D4AF37', fontWeight: 700, flexShrink: 0 }}>•</span>
+                    <ul className="space-y-1">
+                      {items.slice(0, 5).map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-[#9CA3AF] text-[11px] leading-snug">
+                          <span className="text-[#D4AF37] mt-1.5 w-1 h-1 rounded-full bg-[#D4AF37] shrink-0"></span>
                           <span>{item}</span>
                         </li>
                       ))}
@@ -185,7 +191,7 @@ const QuotePreview = forwardRef(({ settings, customerName, eventDate, location, 
           </div>
 
           {/* FOOTER MESSAGES */}
-          <div className="mt-8 text-center text-[#9CA3AF] text-[11px] italic opacity-80">
+          <div className="mt-4 text-center text-[#9CA3AF] text-[10px] italic opacity-80">
             Cảm ơn bạn đã lựa chọn Phu Thanh Wedding Dreams!
           </div>
 

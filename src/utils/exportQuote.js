@@ -5,10 +5,11 @@ export async function exportQuoteAsImage(elementId = 'quote-export-node') {
   if (!node) throw new Error('Export node not found');
 
   const canvas = await html2canvas(node, {
-    scale: 2,
+    scale: 3, // Tăng lên 3x để ảnh siêu sắc nét
     useCORS: true,
     backgroundColor: '#0B1410',
     logging: false,
+    imageTimeout: 0, // Đảm bảo logo và ảnh tải xong mới chụp
   });
 
   return new Promise((resolve) => {

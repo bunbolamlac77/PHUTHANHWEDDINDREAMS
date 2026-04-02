@@ -48,10 +48,10 @@ export default function QuoteForm(props) {
   };
 
   return (
-    <div className="px-4 space-y-6 mb-8 mt-2">
+    <div className="px-0 sm:px-4 space-y-6 mb-8 mt-2">
       
       {/* 1. KHỐI THÔNG TIN DÂU RỂ */}
-      <div className="bg-[#101A15] border border-[#D4AF37]/20 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+      <div className="bg-[#101A15] border-y sm:border border-[#D4AF37]/20 sm:rounded-2xl p-5 shadow-lg relative overflow-hidden">
         <div className="flex items-center gap-2 mb-4">
           <User className="text-pt-gold" size={20} />
           <h2 className="text-pt-gold font-serif text-[18px]">Thông tin Dâu Rể</h2>
@@ -77,7 +77,7 @@ export default function QuoteForm(props) {
       </div>
 
       {/* 2. CHỌN GÓI CHỤP */}
-      <div className="bg-[#101A15] border border-[#D4AF37]/20 rounded-2xl p-5 shadow-lg">
+      <div className="bg-[#101A15] border-y sm:border border-[#D4AF37]/20 sm:rounded-2xl p-5 shadow-lg">
         <div className="flex items-center gap-2 mb-1">
           <Camera className="text-pt-gold" size={20} />
           <h2 className="text-pt-gold font-serif text-[18px]">Chọn Gói Chụp (Sáng)</h2>
@@ -107,7 +107,7 @@ export default function QuoteForm(props) {
       </div>
 
       {/* 3. CHI PHÍ PHÁT SINH */}
-      <div className="bg-[#101A15] border border-[#D4AF37]/20 rounded-2xl p-5 shadow-lg">
+      <div className="bg-[#101A15] border-y sm:border border-[#D4AF37]/20 sm:rounded-2xl p-5 shadow-lg">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-pt-gold font-serif text-[18px]">Chi phí phát sinh</h2>
           <button onClick={addManualCost} className="bg-[#21352A] text-[#9CA3AF] text-[12px] px-3 py-1.5 rounded-lg active:scale-95 transition-transform">+ Thêm khác</button>
@@ -149,7 +149,7 @@ export default function QuoteForm(props) {
         </div>
       </div>
 
-      <div className="bg-[#101A15] border border-[#D4AF37]/20 rounded-2xl p-5 shadow-lg">
+      <div className="bg-[#101A15] border-y sm:border border-[#D4AF37]/20 sm:rounded-2xl p-5 shadow-lg">
           <div className="flex justify-between items-center">
             <h2 className="text-pt-gold font-serif text-[18px]">Tiền khách cọc trước</h2>
           </div>
@@ -159,12 +159,14 @@ export default function QuoteForm(props) {
       </div>
 
       {/* TẠO BÁO GIÁ BUTTON */}
-      <button 
-        onClick={onSave}
-        className="w-full bg-[#D4AF37] hover:bg-[#C2A032] active:scale-[0.98] transition-all text-black font-bold text-[16px] rounded-xl py-4 flex items-center justify-center gap-2 shadow-[0_5px_20px_rgba(212,175,55,0.3)] mt-8"
-      >
-        <Camera size={20} /> TẠO BẢNG BÁO GIÁ
-      </button>
+      <div className="px-4">
+        <button 
+          onClick={onSave}
+          className="w-full bg-[#D4AF37] hover:bg-[#C2A032] active:scale-[0.98] transition-all text-black font-bold text-[16px] rounded-xl py-4 flex items-center justify-center gap-2 shadow-[0_5px_20px_rgba(212,175,55,0.3)] mt-8"
+        >
+          <Camera size={20} /> TẠO BẢNG BÁO GIÁ
+        </button>
+      </div>
 
     </div>
   );

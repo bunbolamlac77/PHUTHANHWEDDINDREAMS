@@ -145,8 +145,8 @@ export default function ShowDetailSheet({ show, isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Actions - Added bottom margin to avoid clipping */}
-        <div className="pt-6 pb-12">
+        {/* Actions - Added significant bottom padding to avoid clipping by TabBar */}
+        <div className="pt-6 pb-[140px]">
           <button onClick={handleDelete} className="w-full py-4 text-red-400 font-bold active:scale-95 transition-transform bg-red-400/10 rounded-xl border border-red-400/20">
             HỦY DỮ LIỆU SHOW NÀY
           </button>

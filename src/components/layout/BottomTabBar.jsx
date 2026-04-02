@@ -9,7 +9,7 @@ const TABS = [
 
 export default function BottomTabBar({ activeTab = 'quote', onChange }) {
   return (
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-[9999] bg-transparent">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-tabbar bg-transparent">
       {/* Background TabBar */}
       <div className="absolute bottom-0 left-0 w-full h-[80px] bg-[#101A15] border-t border-[#D4AF37]/10 shadow-[0_-15px_40px_rgba(0,0,0,0.6)] rounded-t-[32px] pb-safe"></div>
       
@@ -41,9 +41,9 @@ export default function BottomTabBar({ activeTab = 'quote', onChange }) {
             >
               <Icon 
                 size={28} 
-                className={`mb-1.5 transition-colors ${isActive ? 'text-pt-gold' : 'text-[#5C5C5C]'}`} 
+                className={`mb-1.5 transition-colors ${isActive ? 'text-pt-gold' : 'text-[#8C8C8C]'}`} 
               />
-              <span className={`text-[13px] font-extrabold tracking-wide transition-colors ${isActive ? 'text-pt-gold' : 'text-[#5C5C5C]'}`}>
+              <span className={`text-[13px] font-extrabold tracking-wide transition-colors ${isActive ? 'text-pt-gold' : 'text-[#8C8C8C]'}`}>
                 {tab.label}
               </span>
             </button>

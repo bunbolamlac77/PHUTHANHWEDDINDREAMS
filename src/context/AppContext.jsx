@@ -7,7 +7,7 @@ const DEFAULT_SETTINGS = {
   studioAddress: 'Phường Tân Hạnh, Vĩnh Long',
   studioPhone: '0901234567',
   studioEmail: '',
-  studioLogo: '/icons/logo-original.png',
+  studioLogo: '/icons/moi-trongtrang.png',
   slogan: 'Lưu giữ khoảnh khắc trọn vẹn',
   updatedAt: new Date().toISOString(),
 };
@@ -97,7 +97,7 @@ export const AppProvider = ({ children }) => {
       id: generateShowId(),
       createdAt: new Date().toISOString(),
       status: {
-        isDeposited: showData.depositAmount > 0,
+        isDeposited: false, // Luôn mặc định là chưa cọc để user xác nhận thủ công
         isShot: false,
         isFullyPaid: false,
         isDelivered: false

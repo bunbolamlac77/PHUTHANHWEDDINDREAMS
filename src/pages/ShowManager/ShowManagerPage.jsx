@@ -30,9 +30,14 @@ export default function ShowManagerPage() {
 
   return (
     <div className="flex flex-col h-full bg-pt-base">
-      <div className="pt-4 px-4 pb-2 sticky top-0 bg-pt-base/90 backdrop-blur-xl z-sticky">
-        <h1 className="text-display font-heading text-pt-gold">Show List</h1>
-        <p className="text-pt-muted mt-1 text-body">Theo dõi lịch trình và dòng tiền</p>
+      <div className="pt-4 px-4 pb-2 sticky top-0 bg-pt-base/90 backdrop-blur-xl z-sticky flex items-center gap-3.5">
+        <div className="w-[52px] h-[52px] rounded-full border border-pt-gold/30 flex items-center justify-center bg-[#162620] shadow-[0_0_15px_rgba(212,175,55,0.1)] overflow-hidden shrink-0">
+          <img src="/icons/moi-trongtrang.png" alt="Logo" className="w-[38px] h-[38px] object-contain" />
+        </div>
+        <div className="flex-1">
+          <h1 className="text-[21px] font-heading text-pt-gold uppercase font-extrabold tracking-wider">Lịch Trình Show</h1>
+          <p className="text-pt-muted mt-0.5 text-[11px] opacity-75">Theo dõi lịch trình và dòng tiền</p>
+        </div>
       </div>
 
       <div className="sticky top-[80px] z-sticky bg-pt-base/90 backdrop-blur-xl pb-2">
