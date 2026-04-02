@@ -30,7 +30,12 @@ export default defineConfig({
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',
-            options: { cacheName: 'google-fonts', expiration: { maxEntries: 10 } },
+            options: { cacheName: 'google-fonts-stylesheets', expiration: { maxEntries: 10 } },
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: { cacheName: 'google-fonts-webfonts', expiration: { maxEntries: 20 } },
           },
         ],
       },
