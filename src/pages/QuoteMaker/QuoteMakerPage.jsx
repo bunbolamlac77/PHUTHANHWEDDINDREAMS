@@ -94,7 +94,7 @@ export default function QuoteMakerPage() {
         {settings.studioLogo ? (
            <img src={settings.studioLogo} alt="Logo" className="w-[48px] h-[48px] rounded-full object-cover border-2 border-pt-gold ring-2 ring-pt-gold/20" />
         ) : (
-           <img src="/icons/moi-trongtrang.png" alt="Logo" className="w-[48px] h-[48px] object-contain drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]" />
+           <img src="/icons/logo-original.png" alt="Logo" className="w-[48px] h-[48px] object-contain drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]" />
         )}
         <h1 className="text-[24px] font-heading text-pt-gold tracking-wider uppercase font-extrabold">Tạo Báo Giá</h1>
       </div>

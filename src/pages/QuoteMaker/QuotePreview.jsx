@@ -24,7 +24,7 @@ const QuotePreview = forwardRef(({ settings, customerName, eventDate, location, 
           {/* 1. HEADER (Logo + Cty + Báo giá) */}
           <div className="flex justify-between items-start mb-6">
             <div className="flex items-center gap-4">
-              <img src="/icons/moi-trongtrang.png" alt="Logo" className="w-[70px] h-auto object-contain drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]" />
+              <img src="/icons/logo-original.png" alt="Logo" className="w-[70px] h-auto object-contain drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]" />
               {/* Info Studio */}
               <div>
                  <h2 className="text-[#D4AF37] font-serif text-[18px] leading-tight font-medium uppercase tracking-wide">

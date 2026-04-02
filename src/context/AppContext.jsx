@@ -7,7 +7,7 @@ const DEFAULT_SETTINGS = {
   studioAddress: 'Phường Tân Hạnh, Vĩnh Long',
   studioPhone: '0901234567',
   studioEmail: '',
-  studioLogo: '/icons/moi-trongtrang.png',
+  studioLogo: '/icons/logo-original.png',
   slogan: 'Lưu giữ khoảnh khắc trọn vẹn',
   updatedAt: new Date().toISOString(),
 };
