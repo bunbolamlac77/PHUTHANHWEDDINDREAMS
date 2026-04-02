@@ -4,9 +4,16 @@ import CurrencyInput from '../../components/shared/CurrencyInput';
 import { generateServiceId } from '../../utils/generateId';
 import Toast from '../../components/ui/Toast';
 
+const CATEGORY_OPTIONS = [
+  { value: 'wedding', label: '📸 Gói Chụp' },
+  { value: 'video',   label: '🎥 Gói Quay' },
+  { value: 'other',   label: '🎊 Khác' },
+];
+
 export default function ServiceModal({ isOpen, onClose, service, onSave }) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('wedding');
   const [deliverablesStr, setDeliverablesStr] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
 
@@ -14,6 +21,7 @@ export default function ServiceModal({ isOpen, onClose, service, onSave }) {
     if (isOpen) {
       setName(service?.name || '');
       setPrice(service?.price?.toString() || '');
+      setCategory(service?.category || 'wedding');
       setDeliverablesStr(service?.deliverables?.join('\n') || '');
     }
   }, [isOpen, service]);
@@ -30,6 +38,7 @@ export default function ServiceModal({ isOpen, onClose, service, onSave }) {
       id: service?.id || generateServiceId(),
       name: name.trim(),
       price: cleanPrice,
+      category,
       deliverables,
       updatedAt: new Date().toISOString(),
       createdAt: service?.createdAt || new Date().toISOString()
@@ -47,6 +56,25 @@ export default function ServiceModal({ isOpen, onClose, service, onSave }) {
             className="w-full bg-pt-elevated border-1.5 border-transparent focus:border-pt-gold rounded-xl px-4 py-3 text-pt-text text-[15px] outline-none"
             value={name} onChange={e => setName(e.target.value)}
           />
+        </div>
+        <div>
+          <label className="block text-pt-muted text-[13px] mb-1">Loại Dịch Vụ</label>
+          <div className="flex gap-2">
+            {CATEGORY_OPTIONS.map(opt => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setCategory(opt.value)}
+                className={`flex-1 py-2.5 rounded-xl text-[13px] font-medium border transition-all ${
+                  category === opt.value
+                    ? 'bg-pt-gold/20 border-pt-gold text-pt-gold'
+                    : 'bg-pt-elevated border-transparent text-pt-muted'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
         <div>
           <label className="block text-pt-muted text-[13px] mb-1">Giá Tiền</label>
