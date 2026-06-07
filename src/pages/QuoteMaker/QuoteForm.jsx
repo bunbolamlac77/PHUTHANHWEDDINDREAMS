@@ -5,14 +5,15 @@ import CurrencyInput from '../../components/shared/CurrencyInput';
 import { generateShowId } from '../../utils/generateId';
 
 const QUICK_EXTRA_TAGS = [
-  { id: 'TAG-1', name: 'Thêm buổi chụp (5h) [+1Tr]', priceStr: '1.000.000' },
-  { id: 'TAG-2', name: 'Phát sinh thêm giờ [+200K]', priceStr: '200.000' },
-  { id: 'TAG-3', name: 'Lễ xuất giá buổi tối [+600K]', priceStr: '600.000' },
-  { id: 'TAG-4', name: 'In 10 ảnh 13x18 [+100K]', priceStr: '100.000' },
-  { id: 'TAG-5', name: 'In ảnh treo tường 40x60 [+200K]', priceStr: '200.000' },
-  { id: 'TAG-6', name: 'Upsize 40x60 lên 60x90 [+300K]', priceStr: '300.000' },
-  { id: 'TAG-7', name: 'Thuê Flycam rước dâu [+1.5Tr]', priceStr: '1.500.000' },
-  { id: 'TAG-8', name: 'Di chuyển ngoại tỉnh [+500K]', priceStr: '500.000' }
+  { id: 'TAG-1', name: 'Thêm buổi chụp chiều [+1.2Tr]', priceStr: '1.200.000' },
+  { id: 'TAG-2', name: 'Phát sinh thêm giờ [+300K/h]', priceStr: '300.000' },
+  { id: 'TAG-3', name: 'Lễ xuất giá buổi tối (Chụp) [+700K]', priceStr: '700.000' },
+  { id: 'TAG-4', name: 'Lễ xuất giá buổi tối (Quay) [+1.2Tr]', priceStr: '1.200.000' },
+  { id: 'TAG-5', name: 'In thêm ảnh 13x18 [+10K]', priceStr: '10.000' },
+  { id: 'TAG-6', name: 'In ảnh treo tường 40x60 [+300K]', priceStr: '300.000' },
+  { id: 'TAG-7', name: 'Upsize 40x60 lên 60x90 [+400K]', priceStr: '400.000' },
+  { id: 'TAG-8', name: 'Thuê Flycam quay rước dâu [+1.5Tr]', priceStr: '1.500.000' },
+  { id: 'TAG-9', name: 'Ngoại tỉnh Vĩnh Long cũ [+300K]', priceStr: '300.000' }
 ];
 
 export default function QuoteForm(props) {
