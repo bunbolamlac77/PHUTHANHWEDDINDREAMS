@@ -1,9 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Download, Upload } from 'lucide-react';
 import { exportBackup, importBackup } from '../../utils/backupRestore';
-
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../../config/firebase';
 export default function DataManagement({ settings, services, shows }) {
   const fileInputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   const handleExport = () => exportBackup(settings, services, shows);
 
@@ -13,14 +15,30 @@ export default function DataManagement({ settings, services, shows }) {
     
     try {
       const data = await importBackup(file);
-      if (window.confirm("CẢNH BÁO: Dữ liệu hiện tại sẽ bị ghi đè hoàn toàn bởi bản Backup này. Bạn có chắc chắn?")) {
-        if (data.phuthanh_settings) localStorage.setItem('phuthanh_settings', JSON.stringify(data.phuthanh_settings));
-        if (data.phuthanh_services) localStorage.setItem('phuthanh_services', JSON.stringify(data.phuthanh_services));
-        if (data.phuthanh_shows) localStorage.setItem('phuthanh_shows', JSON.stringify(data.phuthanh_shows));
+      if (window.confirm("Bạn có chắc chắn muốn khôi phục danh sách Show từ file này? (Bảng giá và Cài đặt sẽ được giữ nguyên)")) {
+        setLoading(true);
+        const showsData = data.phuthanh_shows || [];
+        
+        for (const show of showsData) {
+          const showRef = doc(db, 'shows', show.id);
+          const dataToRestore = {
+            customerName: show.customerName,
+            finalAmount: show.finalAmount,
+            depositAmount: show.depositAmount,
+            status: show.status
+          };
+          await setDoc(showRef, dataToRestore, { merge: true });
+        }
+        
+        alert("Khôi phục danh sách Show thành công!");
         window.location.reload();
       }
-    } catch {
-      alert("File Backup không hợp lệ!");
+    } catch (error) {
+      console.error(error);
+      alert("File Backup không hợp lệ hoặc có lỗi xảy ra!");
+    } finally {
+      setLoading(false);
+      e.target.value = null; // Reset input
     }
   };
 
@@ -32,9 +50,9 @@ export default function DataManagement({ settings, services, shows }) {
           <Download className="text-pt-gold" size={24} />
           <span className="text-pt-text font-medium text-[14px]">Xuất Backup</span>
         </button>
-        <button onClick={() => fileInputRef.current?.click()} className="flex-1 bg-pt-elevated border border-pt-text/10 rounded-2xl py-4 flex flex-col items-center justify-center gap-2 active:scale-95 transition-transform">
+        <button onClick={() => fileInputRef.current?.click()} disabled={loading} className="flex-1 bg-pt-elevated border border-pt-text/10 rounded-2xl py-4 flex flex-col items-center justify-center gap-2 active:scale-95 transition-transform disabled:opacity-50">
           <Upload className="text-pt-muted" size={24} />
-          <span className="text-pt-text font-medium text-[14px]">Khôi phục</span>
+          <span className="text-pt-text font-medium text-[14px]">{loading ? 'Đang tải...' : 'Khôi phục'}</span>
         </button>
         <input type="file" accept=".json" className="hidden" ref={fileInputRef} onChange={handleImport} />
       </div>
