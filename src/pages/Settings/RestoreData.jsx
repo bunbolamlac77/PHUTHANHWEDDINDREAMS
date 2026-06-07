@@ -17,8 +17,15 @@ export default function RestoreData() {
         // Sử dụng lại đúng ID cũ của show (ví dụ: SH-1780214705686)
         const showRef = doc(db, 'shows', show.id);
         
-        // setDoc sẽ lưu lại toàn bộ tiền cọc, tổng tiền và trạng thái (isDeposited, isShot...)
-        await setDoc(showRef, show);
+        const dataToRestore = {
+          customerName: show.customerName,
+          finalAmount: show.finalAmount,
+          depositAmount: show.depositAmount,
+          status: show.status
+        };
+        
+        // setDoc sẽ chỉ lưu lại tên dâu rể, tiền cọc, tổng tiền và trạng thái (isDeposited, isShot...)
+        await setDoc(showRef, dataToRestore, { merge: true });
       }
       
       console.log('✅ Đã đẩy xong danh sách Show!');

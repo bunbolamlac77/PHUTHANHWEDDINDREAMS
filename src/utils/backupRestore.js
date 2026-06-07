@@ -1,9 +1,17 @@
 export function exportBackup(settings, services, shows) {
+  const filteredShows = shows.map(show => ({
+    id: show.id,
+    customerName: show.customerName,
+    finalAmount: show.finalAmount,
+    depositAmount: show.depositAmount,
+    status: show.status
+  }));
+
   const data = {
     version: '1.0',
     app: 'PhuThanh Wedding Dreams',
     exportedAt: new Date().toISOString(),
-    data: { phuthanh_settings: settings, phuthanh_services: services, phuthanh_shows: shows },
+    data: { phuthanh_shows: filteredShows },
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
