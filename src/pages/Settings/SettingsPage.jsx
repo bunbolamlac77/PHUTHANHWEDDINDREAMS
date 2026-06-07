@@ -2,6 +2,7 @@ import React from 'react';
 import StudioInfoSection from './StudioInfoSection';
 import ServiceListSection from './ServiceListSection';
 import DataManagement from './DataManagement';
+import RestoreData from './RestoreData';
 import { useAppContext } from '../../context/AppContext';
 
 export default function SettingsPage() {
@@ -19,6 +20,8 @@ export default function SettingsPage() {
       <ServiceListSection services={services} setServices={setServices} />
       
       <DataManagement settings={settings} services={services} shows={shows} />
+      
+      <RestoreData />
     </div>
   );
 }
