@@ -1,6 +1,6 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { generateShowId } from '../utils/generateId';
+import { getShows, addShow as addShowService, updateShow as updateShowService, deleteShow as deleteShowService } from '../services/showService';
 
 const DEFAULT_SETTINGS = {
   studioName: 'PhuThanh Wedding Dreams',
@@ -53,12 +53,23 @@ const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [settings, setSettings] = useLocalStorage('phuthanh_settings', DEFAULT_SETTINGS);
   const [services, setServices] = useLocalStorage('phuthanh_services', DEFAULT_SERVICES);
-  const [shows, setShows] = useLocalStorage('phuthanh_shows', []);
+  const [shows, setShows] = useState([]);
 
-  const addShow = (showData) => {
+  useEffect(() => {
+    const fetchShows = async () => {
+      try {
+        const data = await getShows();
+        setShows(data);
+      } catch (error) {
+        console.error("Failed to fetch shows from Firebase:", error);
+      }
+    };
+    fetchShows();
+  }, []);
+
+  const addShow = async (showData) => {
     const newShow = {
       ...showData,
-      id: generateShowId(),
       createdAt: new Date().toISOString(),
       status: {
         isDeposited: false, // Luôn mặc định là chưa cọc để user xác nhận thủ công
@@ -67,16 +78,33 @@ export const AppProvider = ({ children }) => {
         isDelivered: false
       }
     };
-    setShows([newShow, ...shows]);
-    return newShow;
+    try {
+      const id = await addShowService(newShow);
+      newShow.id = id;
+      setShows([newShow, ...shows]);
+      return newShow;
+    } catch (error) {
+      console.error("Failed to add show to Firebase:", error);
+    }
   };
 
-  const updateShow = (id, updatedData) => {
-    setShows(shows.map(show => show.id === id ? { ...show, ...updatedData, updatedAt: new Date().toISOString() } : show));
+  const updateShow = async (id, updatedData) => {
+    try {
+      const dataWithTimestamp = { ...updatedData, updatedAt: new Date().toISOString() };
+      await updateShowService(id, dataWithTimestamp);
+      setShows(shows.map(show => show.id === id ? { ...show, ...dataWithTimestamp } : show));
+    } catch (error) {
+      console.error("Failed to update show in Firebase:", error);
+    }
   };
 
-  const deleteShow = (id) => {
-    setShows(shows.filter(show => show.id !== id));
+  const deleteShow = async (id) => {
+    try {
+      await deleteShowService(id);
+      setShows(shows.filter(show => show.id !== id));
+    } catch (error) {
+      console.error("Failed to delete show from Firebase:", error);
+    }
   };
 
   return (
