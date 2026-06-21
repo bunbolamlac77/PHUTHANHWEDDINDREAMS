@@ -1,12 +1,17 @@
 import React from 'react';
 import StudioInfoSection from './StudioInfoSection';
 import ServiceListSection from './ServiceListSection';
+import ExtraCostListSection from './ExtraCostListSection';
 import DataManagement from './DataManagement';
-import RestoreData from './RestoreData';
 import { useAppContext } from '../../context/AppContext';
 
 export default function SettingsPage() {
-  const { settings, setSettings, services, setServices, shows } = useAppContext();
+  const { 
+    settings, setSettings, 
+    services, setServices, 
+    extraCostTemplates, setExtraCostTemplates,
+    shows 
+  } = useAppContext();
 
   return (
     <div className="p-4 space-y-6 pb-[100px]">
@@ -19,9 +24,17 @@ export default function SettingsPage() {
       
       <ServiceListSection services={services} setServices={setServices} />
       
-      <DataManagement settings={settings} services={services} shows={shows} />
+      <ExtraCostListSection 
+        extraCostTemplates={extraCostTemplates} 
+        setExtraCostTemplates={setExtraCostTemplates} 
+      />
       
-      <RestoreData />
+      <DataManagement 
+        settings={settings} setSettings={setSettings}
+        services={services} setServices={setServices}
+        extraCostTemplates={extraCostTemplates} setExtraCostTemplates={setExtraCostTemplates}
+        shows={shows} 
+      />
     </div>
   );
 }

@@ -7,17 +7,29 @@ import ShowManagerPage from './pages/ShowManager/ShowManagerPage';
 
 function App() {
   // Simple App Router using state
-  const [activeTab, setActiveTab] = useState('quote'); 
+  const [activeTab, setActiveTab] = useState('quote');
+  const [editingShow, setEditingShow] = useState(null);
+
+  const handleEditQuote = (show) => {
+    setEditingShow(show);
+    setActiveTab('quote');
+  };
+
+  const handleTabChange = (tab) => {
+    // Khi chuyển tab thủ công, reset editingShow
+    if (tab !== 'quote') setEditingShow(null);
+    setActiveTab(tab);
+  };
 
   const renderModule = () => {
     switch (activeTab) {
       case 'settings':
         return <SettingsPage />;
       case 'quote':
-        return <QuoteMakerPage />;
+        return <QuoteMakerPage editingShow={editingShow} onClearEdit={() => setEditingShow(null)} />;
       case 'shows':
       default:
-        return <ShowManagerPage />;
+        return <ShowManagerPage onEditQuote={handleEditQuote} />;
     }
   };
 
@@ -26,7 +38,7 @@ function App() {
       <SafeAreaWrapper>
         {renderModule()}
       </SafeAreaWrapper>
-      <BottomTabBar activeTab={activeTab} onChange={setActiveTab} />
+      <BottomTabBar activeTab={activeTab} onChange={handleTabChange} />
     </div>
   );
 }

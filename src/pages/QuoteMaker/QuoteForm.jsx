@@ -4,24 +4,14 @@ import { formatCurrency } from '../../utils/formatCurrency';
 import CurrencyInput from '../../components/shared/CurrencyInput';
 import { generateShowId } from '../../utils/generateId';
 
-const QUICK_EXTRA_TAGS = [
-  { id: 'TAG-1', name: 'Thêm buổi chụp chiều [+1.2Tr]', priceStr: '1.200.000' },
-  { id: 'TAG-2', name: 'Phát sinh thêm giờ [+300K/h]', priceStr: '300.000' },
-  { id: 'TAG-3', name: 'Lễ xuất giá buổi tối (Chụp) [+700K]', priceStr: '700.000' },
-  { id: 'TAG-4', name: 'Lễ xuất giá buổi tối (Quay) [+1.2Tr]', priceStr: '1.200.000' },
-  { id: 'TAG-5', name: 'In thêm ảnh 13x18 [+10K]', priceStr: '10.000' },
-  { id: 'TAG-6', name: 'In ảnh treo tường 40x60 [+300K]', priceStr: '300.000' },
-  { id: 'TAG-7', name: 'Upsize 40x60 lên 60x90 [+400K]', priceStr: '400.000' },
-  { id: 'TAG-8', name: 'Thuê Flycam quay rước dâu [+1.5Tr]', priceStr: '1.500.000' },
-  { id: 'TAG-9', name: 'Ngoại tỉnh Vĩnh Long cũ [+300K]', priceStr: '300.000' }
-];
-
 export default function QuoteForm(props) {
   const {
     groomName, setGroomName, brideName, setBrideName,
     eventDate, setEventDate, phone, setPhone, location, setLocation,
     services, selectedServiceIds, setSelectedServiceIds,
-    extraCosts, setExtraCosts, depositAmountStr, setDepositAmountStr, onSave
+    extraCosts, setExtraCosts, depositAmountStr, setDepositAmountStr,
+    extraCostTemplates = [], // Từ AppContext (có thể tùy chỉnh trong Cài Đặt)
+    isEditing, onSave
   } = props;
 
   const toggleService = (id) => {
@@ -114,21 +104,23 @@ export default function QuoteForm(props) {
           <button onClick={addManualCost} className="bg-[#21352A] text-[#9CA3AF] text-[12px] px-3 py-1.5 rounded-lg active:scale-95 transition-transform">+ Thêm khác</button>
         </div>
         
-        {/* Rapid Tag Selection */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {QUICK_EXTRA_TAGS.map(tag => (
-            <button 
-              key={tag.id}
-              onClick={() => addQuickTag(tag)}
-              className="bg-[#162620] border border-[#21352A] text-[#9CA3AF] text-[13px] px-3 py-2 rounded-lg active:scale-95 transition-all focus:bg-pt-gold focus:text-black"
-            >
-              {tag.name}
-            </button>
-          ))}
-        </div>
+        {/* Quick Tag Selection – từ extraCostTemplates trong Cài Đặt */}
+        {extraCostTemplates.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {extraCostTemplates.map(tag => (
+              <button 
+                key={tag.id}
+                onClick={() => addQuickTag(tag)}
+                className="bg-[#162620] border border-[#21352A] text-[#9CA3AF] text-[13px] px-3 py-2 rounded-lg active:scale-95 transition-all focus:bg-pt-gold focus:text-black"
+              >
+                {tag.name}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Selected Extra Costs List */}
-        <div className="space-y-3 mt-4">
+        <div className="space-y-3 mt-2">
           {extraCosts.map(item => (
             <div key={item.id} className="flex flex-col gap-3 bg-[#162620] p-4 rounded-xl border border-[#21352A]">
                <div className="flex justify-between items-center bg-[#101A15] p-1.5 pl-3 rounded-lg border border-transparent focus-within:border-pt-gold transition-colors">
@@ -165,7 +157,7 @@ export default function QuoteForm(props) {
           onClick={onSave}
           className="w-full bg-[#D4AF37] hover:bg-[#C2A032] active:scale-[0.98] transition-all text-black font-bold text-[16px] rounded-xl py-4 flex items-center justify-center gap-2 shadow-[0_5px_20px_rgba(212,175,55,0.3)] mt-8"
         >
-          <Camera size={20} /> TẠO BẢNG BÁO GIÁ
+          <Camera size={20} /> {isEditing ? 'CẬP NHẬT BẢNG BÁO GIÁ' : 'TẠO BẢNG BÁO GIÁ'}
         </button>
       </div>
 

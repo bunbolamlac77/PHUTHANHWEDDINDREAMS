@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-export default function BottomSheet({ isOpen, onClose, title, children }) {
+export default function BottomSheet({ isOpen, onClose, title, headerRight, children }) {
   const [startY, setStartY] = useState(0);
   const [currentY, setCurrentY] = useState(0);
   const sheetRef = useRef(null);
@@ -36,8 +36,14 @@ export default function BottomSheet({ isOpen, onClose, title, children }) {
           <div className="w-10 h-1 bg-[#3A3A3A] rounded-full" />
         </div>
         {title && (
-          <div className="px-5 pb-3 pt-1 border-b border-pt-text/10">
-            <h2 className="text-pt-text font-heading text-[18px] font-bold text-center">{title}</h2>
+          <div className="px-4 pb-3 pt-1 border-b border-pt-text/10 flex items-center">
+            {/* Placeholder trái để giữ title căn giữa */}
+            <div className="w-[44px] shrink-0" />
+            <h2 className="text-pt-text font-heading text-[18px] font-bold text-center flex-1">{title}</h2>
+            {/* Action bên phải */}
+            <div className="w-[44px] shrink-0 flex justify-end">
+              {headerRight}
+            </div>
           </div>
         )}
         <div className="p-5 overflow-y-auto flex-1 pb-safe">

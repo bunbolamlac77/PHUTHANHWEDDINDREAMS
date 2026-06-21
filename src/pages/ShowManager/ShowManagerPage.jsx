@@ -4,7 +4,7 @@ import StatusFilterBar from './StatusFilterBar';
 import ShowCard from './ShowCard';
 import ShowDetailSheet from './ShowDetailSheet';
 
-export default function ShowManagerPage() {
+export default function ShowManagerPage({ onEditQuote }) {
   const { shows } = useAppContext();
   const [filter, setFilter] = useState('all'); // all, unpaid, deposited, undelivered, completed
   const [selectedShow, setSelectedShow] = useState(null);
@@ -60,7 +60,8 @@ export default function ShowManagerPage() {
       <ShowDetailSheet 
         show={selectedShow} 
         isOpen={!!selectedShow} 
-        onClose={() => setSelectedShow(null)} 
+        onClose={() => setSelectedShow(null)}
+        onEditQuote={onEditQuote}
       />
     </div>
   );

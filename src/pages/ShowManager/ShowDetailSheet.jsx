@@ -5,8 +5,9 @@ import CurrencyInput from '../../components/shared/CurrencyInput';
 import { formatCurrency, parseCurrency } from '../../utils/formatCurrency';
 import { useAppContext } from '../../context/AppContext';
 import { formatDateVN } from '../../utils/dateHelpers';
+import { Edit2 } from 'lucide-react';
 
-export default function ShowDetailSheet({ show, isOpen, onClose }) {
+export default function ShowDetailSheet({ show, isOpen, onClose, onEditQuote }) {
   const { updateShow, deleteShow } = useAppContext();
   
   // Local state form for easy binding
@@ -76,8 +77,23 @@ export default function ShowDetailSheet({ show, isOpen, onClose }) {
     }
   };
 
+  const handleEditQuote = () => {
+    onClose();
+    setTimeout(() => onEditQuote(show), 200);
+  };
+
+  const editButton = (
+    <button
+      onClick={handleEditQuote}
+      className="w-[44px] h-[44px] flex items-center justify-center rounded-full bg-pt-gold/15 border border-pt-gold/30 active:scale-90 transition-all"
+      title="Chỉnh sửa Bảng Báo Giá"
+    >
+      <Edit2 size={18} className="text-pt-gold" />
+    </button>
+  );
+
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Chi tiết Show">
+    <BottomSheet isOpen={isOpen} onClose={onClose} title="Chi tiết Show" headerRight={editButton}>
       <div className="space-y-6">
         
         {/* Info Box */}
@@ -145,8 +161,8 @@ export default function ShowDetailSheet({ show, isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Actions - Added significant bottom padding to avoid clipping by TabBar */}
-        <div className="pt-6 pb-[140px]">
+        {/* Actions */}
+        <div className="pt-2 pb-[140px]">
           <button onClick={handleDelete} className="w-full py-4 text-red-400 font-bold active:scale-95 transition-transform bg-red-400/10 rounded-xl border border-red-400/20">
             HỦY DỮ LIỆU SHOW NÀY
           </button>

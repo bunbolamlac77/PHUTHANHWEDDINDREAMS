@@ -1,13 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAppContext } from '../../context/AppContext';
 import QuoteForm from './QuoteForm';
 import QuotePreview from './QuotePreview';
 import Toast from '../../components/ui/Toast';
 import { exportQuoteAsImage } from '../../utils/exportQuote';
-import { Share2, Download, CheckCircle2 } from 'lucide-react';
+import { Share2, CheckCircle2 } from 'lucide-react';
 
-export default function QuoteMakerPage() {
-  const { settings, services, addShow } = useAppContext();
+export default function QuoteMakerPage({ editingShow, onClearEdit }) {
+  const { settings, services, extraCostTemplates, addShow, updateShow } = useAppContext();
   
   const [groomName, setGroomName] = useState('');
   const [brideName, setBrideName] = useState('');
@@ -22,20 +22,55 @@ export default function QuoteMakerPage() {
   
   const prevServiceCount = useRef(0);
 
-  // Auto-deposit logic
-  React.useEffect(() => {
+  // ── Điền sẵn form khi đang edit show ──────────────────────────────────────
+  useEffect(() => {
+    if (editingShow) {
+      // Tách tên: "Rể & Dâu" hoặc chỉ 1 tên
+      const parts = (editingShow.customerName || '').split(' & ');
+      setGroomName(parts[0] || '');
+      setBrideName(parts[1] || '');
+      setEventDate(editingShow.eventDate || '');
+      setPhone(editingShow.phone || '');
+      setLocation(editingShow.location || '');
+      setSelectedServiceIds(editingShow.selectedServiceIds || []);
+      setExtraCosts(editingShow.extraCosts || []);
+      const dep = editingShow.depositAmount;
+      setDepositAmountStr(dep ? new Intl.NumberFormat('vi-VN').format(dep) : '');
+      // Reset auto-deposit counter
+      prevServiceCount.current = (editingShow.selectedServiceIds || []).length;
+      // Hiển thị preview ngay
+      setShowExportOptions(true);
+      setTimeout(() => previewRef.current?.scrollIntoView({ behavior: 'smooth' }), 400);
+    } else {
+      // Reset form khi không edit
+      setGroomName('');
+      setBrideName('');
+      setEventDate('');
+      setPhone('');
+      setLocation('');
+      setSelectedServiceIds([]);
+      setExtraCosts([]);
+      setDepositAmountStr('');
+      setShowExportOptions(false);
+      prevServiceCount.current = 0;
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingShow]);
+
+  // Auto-deposit logic (chỉ áp dụng khi KHÔNG đang edit)
+  useEffect(() => {
+    if (editingShow) return; // Không override khi edit
     const count = selectedServiceIds.length;
     if (count !== prevServiceCount.current) {
       if (count > 0) {
         const autoDeposit = count * 500000;
-        // Định dạng thành chuỗi tiền tệ (có dấu .)
         setDepositAmountStr(new Intl.NumberFormat('vi-VN').format(autoDeposit));
       } else {
         setDepositAmountStr('');
       }
       prevServiceCount.current = count;
     }
-  }, [selectedServiceIds.length]);
+  }, [selectedServiceIds.length, editingShow]);
 
   const [toastMessage, setToastMessage] = useState('');
   const previewRef = useRef(null);
@@ -52,6 +87,7 @@ export default function QuoteMakerPage() {
   const customerName = [groomName, brideName].filter(Boolean).join(' & ');
 
   const [showExportOptions, setShowExportOptions] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const handleSaveAndExport = async () => {
     if (!customerName || selectedServiceIds.length === 0) {
@@ -59,23 +95,38 @@ export default function QuoteMakerPage() {
       return;
     }
     
-    // Auto Save Show
-    addShow({
+    const showData = {
       customerName, eventDate, phone, location, selectedServiceIds, extraCosts,
       subtotal, discountAmount: 0, finalAmount, depositAmount
-    });
+    };
+
+    if (editingShow) {
+      // Cập nhật show hiện tại, giữ lại trạng thái
+      await updateShow(editingShow.id, {
+        ...editingShow,
+        ...showData,
+      });
+      setToastMessage('Đã cập nhật báo giá thành công!');
+    } else {
+      // Tạo show mới
+      await addShow(showData);
+      setToastMessage('Lưu thông tin thành công!');
+    }
     
-    setToastMessage('Lưu thông tin thành công!');
-    setShowExportOptions(true); // Mở khoá công cụ tải ảnh
+    setShowExportOptions(true);
 
     // scroll tới Preview
     setTimeout(() => {
        previewRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 300);
+
+    // Tự động xuất và chia sẻ ảnh
+    setTimeout(() => autoShareImage(customerName), 800);
   };
 
-  const handleShareImage = async () => {
-    setToastMessage('Đang chuẩn bị chia sẻ...');
+  // ── Auto-share: tự động mở Share Sheet ngay sau khi tạo báo giá ──────────
+  const autoShareImage = async (name) => {
+    setIsExporting(true);
     try {
       const file = await exportQuoteAsImage('quote-export-node');
       
@@ -83,40 +134,54 @@ export default function QuoteMakerPage() {
         await navigator.share({
           files: [file],
           title: 'Báo Giá Wedding Dreams',
-          text: `Gửi dâu rể báo giá từ Phu Thanh Wedding Dreams`
+          text: `Báo giá từ PhuThanh Wedding Dreams – ${name}`,
         });
-        setToastMessage('Đã mở menu chia sẻ!');
+        setToastMessage('Đã mở Share Sheet! Chọn "Lưu Ảnh" để lưu vào album.');
       } else {
-        // Fallback: Copy to clipboard if possible, or tell user to download
-        try {
-          await navigator.clipboard.write([
-            new window.ClipboardItem({ [file.type]: file })
-          ]);
-          setToastMessage('Đã Copy Báo giá vào Clipboard!');
-        } catch {
-          setToastMessage('Thiết bị không hỗ trợ chia sẻ trực tiếp. Vui lòng nhấn TẢI VỀ');
-        }
+        // Fallback: download thẳng
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `BaoGia-${(name || 'phuthanh').replace(/ /g, '')}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+        setToastMessage('Đã tải ảnh xuống máy!');
       }
     } catch (error) {
-       console.error('Lỗi chia sẻ', error);
-       setToastMessage('Lỗi khi chuẩn bị ảnh. Vui lòng thử lại');
+      if (error.name !== 'AbortError') {
+        console.error('Lỗi chia sẻ', error);
+        setToastMessage('Không thể tự động chia sẻ. Dùng nút bên dưới.');
+      }
+    } finally {
+      setIsExporting(false);
     }
   };
 
-  const handleDownloadImage = async () => {
-    setToastMessage('Đang tải ảnh...');
+  const handleManualShare = async () => {
+    setIsExporting(true);
     try {
       const file = await exportQuoteAsImage('quote-export-node');
-      const url = URL.createObjectURL(file);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `BaoGia-${customerName.replace(/ /g, '')}.png`;
-      a.click();
-      URL.revokeObjectURL(url);
-      setToastMessage('Đã tải xong!');
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Báo Giá Wedding Dreams',
+          text: `Báo giá từ PhuThanh Wedding Dreams – ${customerName}`,
+        });
+      } else {
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `BaoGia-${(customerName || 'phuthanh').replace(/ /g, '')}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+        setToastMessage('Đã tải ảnh!');
+      }
     } catch (error) {
-      console.error(error);
-      setToastMessage('Lỗi tải ảnh');
+      if (error.name !== 'AbortError') {
+        setToastMessage('Lỗi khi xuất ảnh. Vui lòng thử lại.');
+      }
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -130,7 +195,24 @@ export default function QuoteMakerPage() {
             <img src="/icons/moi-trongtrang.png" alt="Logo" className="w-[38px] h-[38px] object-contain" />
           )}
         </div>
-        <h1 className="text-[21px] font-heading text-pt-gold tracking-wider uppercase font-extrabold">Tạo Báo Giá</h1>
+        <div className="flex-1">
+          <h1 className="text-[21px] font-heading text-pt-gold tracking-wider uppercase font-extrabold">
+            {editingShow ? 'Chỉnh Sửa Báo Giá' : 'Tạo Báo Giá'}
+          </h1>
+          {editingShow && (
+            <p className="text-pt-muted text-[12px] mt-0.5">
+              Đang sửa: <span className="text-pt-gold font-medium">{editingShow.customerName}</span>
+            </p>
+          )}
+        </div>
+        {editingShow && (
+          <button
+            onClick={() => { onClearEdit(); }}
+            className="text-pt-muted text-[12px] px-3 py-1.5 rounded-lg bg-pt-elevated border border-pt-text/10 active:scale-95 transition-transform"
+          >
+            + Tạo mới
+          </button>
+        )}
       </div>
 
       <QuoteForm 
@@ -144,7 +226,9 @@ export default function QuoteMakerPage() {
         selectedServiceIds={selectedServiceIds} setSelectedServiceIds={setSelectedServiceIds}
         extraCosts={extraCosts} setExtraCosts={setExtraCosts}
         depositAmountStr={depositAmountStr} setDepositAmountStr={setDepositAmountStr}
+        extraCostTemplates={extraCostTemplates}
         
+        isEditing={!!editingShow}
         onSave={handleSaveAndExport}
       />
 
@@ -161,22 +245,27 @@ export default function QuoteMakerPage() {
         depositAmount={depositAmount}
       />
 
-      {/* Nút hành động Xuất File Hiển thị khi đã Lưu */}
+      {/* Nút hành động – chỉ hiện khi đã tạo */}
       {showExportOptions && (
         <div className="px-4 mt-6">
           <div className="bg-[#101A15] border border-[#D4AF37]/20 rounded-2xl p-5 shadow-lg space-y-4">
-              <div className="flex items-center gap-2 justify-center mb-2">
-                <CheckCircle2 className="text-[#10B981]" size={20} />
-                <h3 className="text-pt-gold font-bold text-[16px]">Bảng Giá Đã Sẵn Sàng</h3>
-             </div>
-             
-             <button onClick={handleShareImage} className="w-full bg-pt-gold hover:opacity-90 active:scale-95 transition-transform text-black font-bold text-[15px] rounded-xl py-3.5 flex items-center justify-center gap-2 shadow-[0_4px_15px_rgba(212,175,55,0.2)]">
-                <Share2 size={18} /> CHIA SẺ ẢNH (ZALO/FB)
-             </button>
+            <div className="flex items-center gap-2 justify-center mb-2">
+              <CheckCircle2 className="text-[#10B981]" size={20} />
+              <h3 className="text-pt-gold font-bold text-[16px]">Bảng Giá Đã Sẵn Sàng</h3>
+            </div>
 
-             <button onClick={handleDownloadImage} className="w-full bg-[#162620] hover:bg-[#1E332A] active:scale-[0.98] transition-transform text-pt-text font-bold text-[15px] rounded-xl py-3.5 flex items-center justify-center gap-2">
-                <Download size={18} /> LƯU ẢNH VÀO MÁY
-             </button>
+            <button
+              onClick={handleManualShare}
+              disabled={isExporting}
+              className="w-full bg-pt-gold hover:opacity-90 active:scale-95 transition-transform text-black font-bold text-[15px] rounded-xl py-3.5 flex items-center justify-center gap-2 shadow-[0_4px_15px_rgba(212,175,55,0.2)] disabled:opacity-60"
+            >
+              <Share2 size={18} />
+              {isExporting ? 'Đang xử lý...' : 'CHIA SẺ / LƯU VÀO ALBUM'}
+            </button>
+
+            <p className="text-center text-pt-muted text-[11px] opacity-70">
+              📱 Trên iOS: nhấn "Lưu Ảnh" trong Share Sheet để lưu vào Album
+            </p>
           </div>
         </div>
       )}
