@@ -1,9 +1,11 @@
 import React, { forwardRef } from 'react';
-import { formatCurrency } from '../../utils/formatCurrency';
+import { formatCurrency, parseCurrency } from '../../utils/formatCurrency';
 import { formatDateVN } from '../../utils/dateHelpers';
+import { extractDeliverables } from '../../utils/deliverableHelpers';
 
 const QuotePreview = forwardRef(({ settings, customerName, eventDate, location, selectedServices, extraCosts, finalAmount, depositAmount }, ref) => {
   const remainingAmount = Math.max(0, finalAmount - depositAmount);
+  const hasNoAlbumCost = extraCosts.some(e => /không in album/i.test(e.name || ''));
 
   return (
     <div className="px-4 pb-24">
@@ -60,69 +62,69 @@ const QuotePreview = forwardRef(({ settings, customerName, eventDate, location, 
 
           <div style={{ height: '1px', backgroundColor: 'rgba(212, 175, 55, 0.3)', marginBottom: '12px' }}></div>
 
-          {/* MAIN TABLE: Services & Extra Costs - HORIZONTAL SCROLLABLE */}
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-[#D4AF37] font-bold text-[11px] uppercase tracking-[0.2em]">DỊCH VỤ</span>
-              <span className="text-[#D4AF37] font-bold text-[11px] uppercase tracking-[0.2em]">THÀNH TIỀN</span>
-            </div>
+          {/* 3. MAIN TABLE: Services & Extra Costs */}
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-[#D4AF37] font-bold text-[11px] uppercase tracking-[0.2em]">DỊCH VỤ</span>
+            <span className="text-[#D4AF37] font-bold text-[11px] uppercase tracking-[0.2em]">THÀNH TIỀN</span>
+          </div>
 
-            {/* Wrapper cuộn ngang */}
-            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-              <table style={{ borderCollapse: 'collapse', minWidth: '100%', tableLayout: 'auto' }}>
-                {/* Header row */}
-                <thead>
-                  <tr style={{ borderBottom: '1px solid rgba(212,175,55,0.15)' }}>
-                    <th style={{ textAlign: 'left', padding: '6px 8px 6px 0', color: '#D4AF37', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', whiteSpace: 'nowrap' }}>
-                      #
-                    </th>
-                    <th style={{ textAlign: 'left', padding: '6px 16px 6px 8px', color: '#D4AF37', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', whiteSpace: 'nowrap' }}>
-                      Dịch Vụ
-                    </th>
-                    <th style={{ textAlign: 'right', padding: '6px 0 6px 16px', color: '#D4AF37', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', whiteSpace: 'nowrap' }}>
-                      Đơn Giá
-                    </th>
+          {/* Wrapper bảng giá */}
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <table style={{ borderCollapse: 'collapse', minWidth: '100%', tableLayout: 'auto' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid rgba(212,175,55,0.15)' }}>
+                  <th style={{ textAlign: 'left', padding: '6px 8px 6px 0', color: '#D4AF37', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', whiteSpace: 'nowrap' }}>
+                    #
+                  </th>
+                  <th style={{ textAlign: 'left', padding: '6px 16px 6px 8px', color: '#D4AF37', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', whiteSpace: 'nowrap' }}>
+                    Dịch Vụ
+                  </th>
+                  <th style={{ textAlign: 'right', padding: '6px 0 6px 16px', color: '#D4AF37', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', whiteSpace: 'nowrap' }}>
+                    Đơn Giá
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {/* Dịch vụ chính */}
+                {selectedServices.map((svc, idx) => (
+                  <tr key={svc.id} style={{ borderBottom: '1px solid rgba(212,175,55,0.08)' }}>
+                    <td style={{ padding: '7px 8px 7px 0', color: '#D4AF37', fontSize: '12px', fontWeight: 700, verticalAlign: 'top', whiteSpace: 'nowrap' }}>
+                      {idx + 1}.
+                    </td>
+                    <td style={{ padding: '7px 16px 7px 8px', color: '#F3E9D2', fontSize: '13px', fontWeight: 500, verticalAlign: 'top', minWidth: '160px' }}>
+                      {svc.name}
+                    </td>
+                    <td style={{ padding: '7px 0 7px 16px', color: '#F3E9D2', fontSize: '13px', fontWeight: 700, textAlign: 'right', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
+                      {formatCurrency(svc.price)}
+                    </td>
                   </tr>
-                </thead>
+                ))}
 
-                <tbody>
-                  {/* Dịch vụ chính */}
-                  {selectedServices.map((svc, idx) => (
-                    <tr key={svc.id} style={{ borderBottom: '1px solid rgba(212,175,55,0.08)' }}>
-                      <td style={{ padding: '7px 8px 7px 0', color: '#D4AF37', fontSize: '12px', fontWeight: 700, verticalAlign: 'top', whiteSpace: 'nowrap' }}>
-                        {idx + 1}.
+                {/* Phụ phí / Extra costs */}
+                {extraCosts.map((item, i) => {
+                  const price = parseCurrency(item.priceStr);
+                  const isDiscount = price < 0;
+                  return (
+                    <tr key={`extra-${i}`} style={{ borderBottom: '1px solid rgba(212,175,55,0.06)' }}>
+                      <td style={{ padding: '5px 8px 5px 0', color: isDiscount ? '#EF4444' : '#9CA3AF', fontSize: '11px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
+                        {isDiscount ? '−' : '↳'}
                       </td>
-                      <td style={{ padding: '7px 16px 7px 8px', color: '#F3E9D2', fontSize: '13px', fontWeight: 500, verticalAlign: 'top', minWidth: '160px' }}>
-                        {svc.name}
+                      <td style={{ padding: '5px 16px 5px 8px', color: isDiscount ? '#FCA5A5' : '#9CA3AF', fontSize: '12px', fontStyle: 'italic', verticalAlign: 'top', minWidth: '160px' }}>
+                        {item.name || 'Phụ phí'}
                       </td>
-                      <td style={{ padding: '7px 0 7px 16px', color: '#F3E9D2', fontSize: '13px', fontWeight: 700, textAlign: 'right', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
-                        {formatCurrency(svc.price)}
+                      <td style={{ padding: '5px 0 5px 16px', color: isDiscount ? '#EF4444' : '#9CA3AF', fontSize: '12px', fontStyle: 'italic', textAlign: 'right', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
+                        {formatCurrency(price)}
                       </td>
                     </tr>
-                  ))}
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
 
-                  {/* Phụ phí / Extra costs */}
-                  {extraCosts.map((item, i) => {
-                    const price = Number(item.priceStr.replace(/\D/g, '') || 0);
-                    return (
-                      <tr key={`extra-${i}`} style={{ borderBottom: '1px solid rgba(212,175,55,0.06)' }}>
-                        <td style={{ padding: '5px 8px 5px 0', color: '#9CA3AF', fontSize: '11px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
-                          ↳
-                        </td>
-                        <td style={{ padding: '5px 16px 5px 8px', color: '#9CA3AF', fontSize: '12px', fontStyle: 'italic', verticalAlign: 'top', minWidth: '160px' }}>
-                          {item.name || 'Phụ phí'}
-                        </td>
-                        <td style={{ padding: '5px 0 5px 16px', color: '#9CA3AF', fontSize: '12px', fontStyle: 'italic', textAlign: 'right', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
-                          {formatCurrency(price)}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-          {/* TOTAL BAR - Match sample style */}
-          <div className="mb-6 space-y-1.5">
+          {/* 4. TOTAL BAR */}
+          <div className="mb-6 space-y-1.5 mt-2">
             <div className="flex justify-between items-center py-1.5 border-t border-[#D4AF37]/10 mt-2">
                <span className="text-[#F3E9D2] text-[14px] font-bold uppercase tracking-tight">Tổng cộng</span>
                <span className="text-[#F3E9D2] text-[16px] font-bold">{formatCurrency(finalAmount)}</span>
@@ -139,59 +141,56 @@ const QuotePreview = forwardRef(({ settings, customerName, eventDate, location, 
             </div>
           </div>
 
-          {/* 5. DELIVERABLES (SẢN PHẨM NHẬN ĐƯỢC) - Grid Layout */}
-          <div className="flex-1">
-            <h4 style={{ color: '#D4AF37', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
-              SẢN PHẨM NHẬN ĐƯỢC
-            </h4>
-            
-            <div className={`grid ${selectedServices.length > 1 ? 'grid-cols-2' : 'grid-cols-1'} gap-x-8 gap-y-4`}>
-              {selectedServices.map(svc => {
-                const rawDeliverables = svc.deliverables || [];
-                if (rawDeliverables.length === 0) return null;
+          {/* 5. DELIVERABLES (SẢN PHẨM & QUYỀN LỢI NHẬN ĐƯỢC) */}
+          {selectedServices.some(s => extractDeliverables(s).length > 0) && (
+            <div className="flex-1 mt-1">
+              <h4 style={{ color: '#D4AF37', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
+                SẢN PHẨM & QUYỀN LỢI NHẬN ĐƯỢC
+              </h4>
+              
+              <div className={`grid ${selectedServices.length > 1 ? 'grid-cols-2' : 'grid-cols-1'} gap-x-6 gap-y-4`}>
+                {selectedServices.map(svc => {
+                  const items = extractDeliverables(svc);
+                  if (items.length === 0) return null;
 
-                // Flatten and clean items
-                const items = [];
-                rawDeliverables.forEach(d => {
-                  const parts = d.split(/[,;]/);
-                  parts.forEach(p => {
-                    // 1. Remove all emojis and non-standard symbols everywhere in the string
-                    // 2. Remove redundant prefixes (like "Sản phẩm nhận được:")
-                    const clean = p
-                      .replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '') // Emojis
-                      .replace(/^(Sản phẩm nhận được:|Sản phẩm:|Nhận được:|\s|[:.-])+/gi, '') // Prefixes at start
-                      .replace(/\s+/g, ' ') // Collapse spaces
-                      .trim();
+                  return (
+                    <div key={svc.id} className="flex-1">
+                      <p style={{ color: '#F3E9D2', fontWeight: 700, fontSize: '13px', marginBottom: '6px', borderLeft: '2px solid #D4AF37', paddingLeft: '8px' }}>
+                        {svc.name}:
+                      </p>
+                      <ul className="space-y-1.5">
+                        {items.map((item, i) => {
+                          const isAlbumItem = /album|lồng ảnh/i.test(item);
+                          const isStriked = hasNoAlbumCost && isAlbumItem;
 
-                    if (clean && /album|ảnh lớn|treo tường|phim|tặng kèm|tự tay chọn|usb|youtube/i.test(clean)) {
-                      items.push(clean.charAt(0).toUpperCase() + clean.slice(1));
-                    }
-                  });
-                });
-
-                if (items.length === 0) return null;
-
-                return (
-                  <div key={svc.id} className="flex-1">
-                    <p style={{ color: '#F3E9D2', fontWeight: 700, fontSize: '13px', marginBottom: '6px', borderLeft: '2px solid #D4AF37', paddingLeft: '8px' }}>
-                      {svc.name}:
-                    </p>
-                    <ul className="space-y-1">
-                      {items.slice(0, 5).map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-[#9CA3AF] text-[11px] leading-snug">
-                          <span className="text-[#D4AF37] mt-1.5 w-1 h-1 rounded-full bg-[#D4AF37] shrink-0"></span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              })}
+                          return (
+                            <li key={i} className="flex items-start gap-2 text-[#9CA3AF] text-[11px] leading-snug">
+                              <span className={`mt-1.5 w-1 h-1 rounded-full shrink-0 ${isStriked ? 'bg-red-400' : 'bg-[#D4AF37]'}`}></span>
+                              <span className="break-words">
+                                {isStriked ? (
+                                  <>
+                                    <span className="line-through opacity-50">{item}</span>
+                                    <span className="text-red-400 font-semibold ml-1.5 text-[10px] block sm:inline">
+                                      (Đã trừ 300k - Không in album)
+                                    </span>
+                                  </>
+                                ) : (
+                                  item
+                                )}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* FOOTER MESSAGES */}
-          <div className="mt-4 text-center text-[#9CA3AF] text-[10px] italic opacity-80">
+          <div className="mt-6 text-center text-[#9CA3AF] text-[10px] italic opacity-80">
             Cảm ơn bạn đã lựa chọn Phu Thanh Wedding Dreams!
           </div>
 

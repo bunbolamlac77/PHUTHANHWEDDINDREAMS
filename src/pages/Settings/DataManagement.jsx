@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { Download, Upload, CheckCircle, AlertCircle, Info } from 'lucide-react';
+import { Download, Upload, CheckCircle, AlertCircle, Info, RefreshCw } from 'lucide-react';
 import { exportBackup, importBackup } from '../../utils/backupRestore';
 import { doc, setDoc, deleteDoc, getDocs, collection } from 'firebase/firestore';
 import { db } from '../../config/firebase';
+import { useAppContext } from '../../context/AppContext';
 
 export default function DataManagement({ 
   settings, setSettings,
@@ -17,6 +18,19 @@ export default function DataManagement({
   const showStatus = (type, message) => {
     setStatus({ type, message });
     setTimeout(() => setStatus(null), 5000);
+  };
+
+  const { resetToDefaultData } = useAppContext();
+
+  // ── ĐỒNG BỘ BẢNG GIÁ MỚI ──────────────────────────────────────────────────
+  const handleSyncDefaultData = () => {
+    const confirmed = window.confirm(
+      "Bạn có muốn nạp lại dữ liệu 4 Gói dịch vụ mới (Truyền Thống Cưới 2.5Tr, Lai Phóng Sự 3.2Tr, Dạm Ngõ 1.5Tr, Quay Phim 4Tr) và 11 Chi phí phát sinh chuẩn từ PhuThanh Wedding Dreams không?"
+    );
+    if (confirmed) {
+      resetToDefaultData();
+      showStatus('success', 'Đã cập nhật bảng giá và chi phí phát sinh mới nhất thành công!');
+    }
   };
 
   // ── XUẤT BACKUP ────────────────────────────────────────────────────────────
@@ -163,6 +177,18 @@ export default function DataManagement({
         </button>
 
         <input type="file" accept=".json" className="hidden" ref={fileInputRef} onChange={handleImport} />
+      </div>
+
+      {/* ĐỒNG BỘ BẢNG GIÁ MỚI */}
+      <div className="mt-4">
+        <button
+          onClick={handleSyncDefaultData}
+          disabled={loading}
+          className="w-full bg-[#162620] hover:bg-[#1a2e26] border border-[#D4AF37]/30 rounded-2xl p-4 flex items-center justify-center gap-3 active:scale-98 transition-all text-pt-gold font-bold text-[14px] shadow-[0_4px_15px_rgba(212,175,55,0.1)]"
+        >
+          <RefreshCw size={18} className="text-pt-gold shrink-0" />
+          <span>Cập Nhật Bảng Giá & Chi Phí Mới Nhất</span>
+        </button>
       </div>
 
       {/* Status indicator */}

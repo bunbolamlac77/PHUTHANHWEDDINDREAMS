@@ -67,26 +67,44 @@ export default function QuoteForm(props) {
         </div>
       </div>
 
-      {/* 2. CHỌN GÓI CHỤP */}
+      {/* 2. CHỌN GÓI DỊCH VỤ */}
       <div className="bg-[#101A15] border-y sm:border border-[#D4AF37]/20 sm:rounded-2xl p-5 shadow-lg">
         <div className="flex items-center gap-2 mb-1">
           <Camera className="text-pt-gold" size={20} />
-          <h2 className="text-pt-gold font-serif text-[18px]">Chọn Gói Chụp (Sáng)</h2>
+          <h2 className="text-pt-gold font-serif text-[18px]">Chọn Gói Dịch Vụ</h2>
         </div>
-        <p className="text-[#9CA3AF] text-[11px] font-bold tracking-wider mb-4 uppercase">Gói cưới & Video (Từ CSDL)</p>
+        <p className="text-[#9CA3AF] text-[11px] font-bold tracking-wider mb-4 uppercase">Bảng Giá Gói Chụp & Quay Phim</p>
         
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {services.map(svc => {
             const isSelected = selectedServiceIds.includes(svc.id);
+            const isBestSeller = svc.isBestSeller || svc.id === 'SV-002';
             return (
               <div 
                 key={svc.id} 
                 onClick={() => toggleService(svc.id)}
-                className={`w-full flex justify-between items-center rounded-xl px-4 py-4 transition-all duration-300 active:scale-95 ${isSelected ? 'bg-pt-gold/20 border-pt-gold border shadow-[0_0_15px_rgba(212,175,55,0.15)] text-pt-gold' : 'bg-[#162620] border border-transparent text-[#F3E9D2]'}`}
+                className={`w-full flex justify-between items-center rounded-xl px-4 py-3.5 transition-all duration-300 active:scale-95 cursor-pointer relative ${
+                  isSelected 
+                    ? 'bg-pt-gold/20 border-pt-gold border shadow-[0_0_15px_rgba(212,175,55,0.15)] text-pt-gold' 
+                    : 'bg-[#162620] border border-transparent text-[#F3E9D2] hover:border-pt-gold/30'
+                }`}
               >
                 <div className="flex items-center gap-3 flex-1 pr-2">
-                  {isSelected && <Check size={18} className="text-pt-gold shrink-0" />}
-                  <span className="text-[15px] leading-snug">{svc.name}</span>
+                  <div className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition-colors ${
+                    isSelected ? 'bg-pt-gold border-pt-gold text-black' : 'border-[#4A4A4A]'
+                  }`}>
+                    {isSelected && <Check size={14} strokeWidth={3} />}
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[15px] font-semibold leading-snug">{svc.name}</span>
+                      {isBestSeller && (
+                        <span className="bg-red-600/90 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded tracking-wider uppercase">
+                          Best Seller
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <span className={`text-[15px] font-bold whitespace-nowrap shrink-0 ${isSelected ? 'text-pt-gold' : 'text-[#F3E9D2]'}`}>
                   {svc.price === 0 ? '0đ' : formatCurrency(svc.price)}
@@ -107,15 +125,22 @@ export default function QuoteForm(props) {
         {/* Quick Tag Selection – từ extraCostTemplates trong Cài Đặt */}
         {extraCostTemplates.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
-            {extraCostTemplates.map(tag => (
-              <button 
-                key={tag.id}
-                onClick={() => addQuickTag(tag)}
-                className="bg-[#162620] border border-[#21352A] text-[#9CA3AF] text-[13px] px-3 py-2 rounded-lg active:scale-95 transition-all focus:bg-pt-gold focus:text-black"
-              >
-                {tag.name}
-              </button>
-            ))}
+            {extraCostTemplates.map(tag => {
+              const isDiscount = String(tag.priceStr || '').startsWith('-') || tag.name.includes('(-');
+              return (
+                <button 
+                  key={tag.id}
+                  onClick={() => addQuickTag(tag)}
+                  className={`text-[13px] px-3 py-2 rounded-lg active:scale-95 transition-all ${
+                    isDiscount 
+                      ? 'bg-[#261515] border border-red-500/30 text-red-300 hover:border-red-500/60 font-medium' 
+                      : 'bg-[#162620] border border-[#21352A] text-[#9CA3AF] hover:border-pt-gold/40'
+                  }`}
+                >
+                  {tag.name}
+                </button>
+              );
+            })}
           </div>
         )}
 

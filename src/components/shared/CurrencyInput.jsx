@@ -1,9 +1,16 @@
 import React from 'react';
 import { maskCurrency } from '../../utils/formatCurrency';
 
-export default function CurrencyInput({ value, onChange, placeholder = 'Nhập số tiền...', className = '', wrapperClass = '' }) {
+export default function CurrencyInput({ 
+  value, 
+  onChange, 
+  placeholder = 'Nhập số tiền...', 
+  className = '', 
+  wrapperClass = '',
+  allowNegative = true 
+}) {
   const handleChange = (e) => {
-    const masked = maskCurrency(e.target.value);
+    const masked = maskCurrency(e.target.value, allowNegative);
     onChange(masked);
   };
 
@@ -11,8 +18,7 @@ export default function CurrencyInput({ value, onChange, placeholder = 'Nhập s
     <div className={`relative ${wrapperClass}`}>
       <input
         type="text"
-        inputMode="numeric"
-        pattern="[0-9]*"
+        inputMode={allowNegative ? 'text' : 'numeric'}
         value={value}
         onChange={handleChange}
         placeholder={placeholder}

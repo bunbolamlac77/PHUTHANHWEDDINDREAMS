@@ -1,49 +1,46 @@
 import React from 'react';
-import { Settings, Camera, CalendarDays } from 'lucide-react';
+import { Camera, Settings } from 'lucide-react';
 
 const TABS = [
-  { id: 'shows', icon: CalendarDays, label: 'Danh Sách' },
   { id: 'quote', icon: Camera, label: 'Tạo Báo Giá' },
   { id: 'settings', icon: Settings, label: 'Cài Đặt' },
 ];
 
 export default function BottomTabBar({ activeTab = 'quote', onChange }) {
   return (
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-tabbar bg-transparent">
-      {/* Background TabBar */}
-      <div className="absolute bottom-0 left-0 w-full h-[80px] bg-[#101A15] border-t border-[#D4AF37]/10 shadow-[0_-15px_40px_rgba(0,0,0,0.6)] rounded-t-[32px] pb-safe"></div>
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-tabbar bg-transparent pointer-events-none">
+      {/* Background TabBar với viền vàng gold sang trọng */}
+      <div className="absolute bottom-0 left-0 w-full h-[74px] bg-[#101A15]/95 backdrop-blur-xl border-t border-[#D4AF37]/25 shadow-[0_-12px_35px_rgba(0,0,0,0.7)] rounded-t-[28px] pb-safe pointer-events-auto"></div>
       
-      <div className="flex items-center justify-between h-[80px] relative px-8 pb-safe">
+      {/* 2 Tabs điều hướng cân đối */}
+      <div className="flex items-center justify-around h-[74px] relative px-8 pb-safe pointer-events-auto">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           
-          // Nút Giữa Floating Cắt Khoét (Cut-out Notch fake)
-          if (tab.id === 'quote') {
-             return (
-               <button
-                 key={tab.id}
-                 onClick={() => onChange(tab.id)}
-                 className="relative flex flex-col items-center justify-center -mt-[44px] active:scale-95 transition-transform"
-               >
-                 <div className={`w-[85px] h-[85px] rounded-full flex items-center justify-center border-[10px] border-[#0B1410] transition-all duration-300 ${isActive ? 'bg-[#D4AF37] shadow-[0_0_25px_rgba(212,175,55,0.7)]' : 'bg-[#162620]'}`}>
-                   <Icon size={36} className={isActive ? 'text-[#0B1410]' : 'text-[#D4AF37]'} strokeWidth={isActive ? 2.5 : 2} />
-                 </div>
-               </button>
-             );
-          }
-
           return (
             <button
               key={tab.id}
+              type="button"
               onClick={() => onChange(tab.id)}
-              className="flex flex-col items-center justify-center w-[85px] h-full active:scale-95 transition-all duration-300 mt-2"
+              className={`flex-1 flex flex-col items-center justify-center py-2 px-4 rounded-2xl transition-all duration-200 active:scale-95 ${
+                isActive ? 'text-pt-gold' : 'text-[#8C8C8C] hover:text-[#B0B0B0]'
+              }`}
             >
-              <Icon 
-                size={28} 
-                className={`mb-1.5 transition-colors ${isActive ? 'text-pt-gold' : 'text-[#8C8C8C]'}`} 
-              />
-              <span className={`text-[13px] font-extrabold tracking-wide transition-colors ${isActive ? 'text-pt-gold' : 'text-[#8C8C8C]'}`}>
+              <div className={`p-2 rounded-xl transition-all duration-200 flex items-center justify-center ${
+                isActive 
+                  ? 'bg-[#D4AF37]/15 shadow-[0_0_20px_rgba(212,175,55,0.25)] border border-[#D4AF37]/30' 
+                  : 'bg-transparent'
+              }`}>
+                <Icon 
+                  size={24} 
+                  strokeWidth={isActive ? 2.5 : 1.8} 
+                  className={isActive ? 'text-pt-gold' : 'text-[#8C8C8C]'}
+                />
+              </div>
+              <span className={`text-[12px] mt-1 tracking-wide transition-colors ${
+                isActive ? 'font-bold text-pt-gold' : 'font-medium text-[#8C8C8C]'
+              }`}>
                 {tab.label}
               </span>
             </button>

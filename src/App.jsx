@@ -3,22 +3,16 @@ import BottomTabBar from './components/layout/BottomTabBar';
 import SafeAreaWrapper from './components/layout/SafeAreaWrapper';
 import QuoteMakerPage from './pages/QuoteMaker/QuoteMakerPage';
 import SettingsPage from './pages/Settings/SettingsPage';
-import ShowManagerPage from './pages/ShowManager/ShowManagerPage';
 
 function App() {
-  // Simple App Router using state
+  // Chỉ sử dụng 2 tab: 'quote' (Tạo Báo Giá) và 'settings' (Cài Đặt)
+  // Đóng băng và loại bỏ hoàn toàn tab 'shows' (Danh Sách)
   const [activeTab, setActiveTab] = useState('quote');
-  const [editingShow, setEditingShow] = useState(null);
-
-  const handleEditQuote = (show) => {
-    setEditingShow(show);
-    setActiveTab('quote');
-  };
 
   const handleTabChange = (tab) => {
-    // Khi chuyển tab thủ công, reset editingShow
-    if (tab !== 'quote') setEditingShow(null);
-    setActiveTab(tab);
+    if (tab === 'quote' || tab === 'settings') {
+      setActiveTab(tab);
+    }
   };
 
   const renderModule = () => {
@@ -26,10 +20,8 @@ function App() {
       case 'settings':
         return <SettingsPage />;
       case 'quote':
-        return <QuoteMakerPage editingShow={editingShow} onClearEdit={() => setEditingShow(null)} />;
-      case 'shows':
       default:
-        return <ShowManagerPage onEditQuote={handleEditQuote} />;
+        return <QuoteMakerPage />;
     }
   };
 

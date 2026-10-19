@@ -4,6 +4,7 @@ import QuoteForm from './QuoteForm';
 import QuotePreview from './QuotePreview';
 import Toast from '../../components/ui/Toast';
 import { exportQuoteAsImage } from '../../utils/exportQuote';
+import { parseCurrency } from '../../utils/formatCurrency';
 import { Share2, CheckCircle2 } from 'lucide-react';
 
 export default function QuoteMakerPage({ editingShow, onClearEdit }) {
@@ -54,7 +55,6 @@ export default function QuoteMakerPage({ editingShow, onClearEdit }) {
       setShowExportOptions(false);
       prevServiceCount.current = 0;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingShow]);
 
   // Auto-deposit logic (chỉ áp dụng khi KHÔNG đang edit)
@@ -78,8 +78,8 @@ export default function QuoteMakerPage({ editingShow, onClearEdit }) {
   // Tính toán
   const selectedServices = services.filter(s => selectedServiceIds.includes(s.id));
   const servicesTotal = selectedServices.reduce((sum, s) => sum + s.price, 0);
-  const extrasTotal = extraCosts.reduce((sum, item) => sum + Number(item.priceStr.replace(/\D/g, '') || 0), 0);
-  const subtotal = servicesTotal + extrasTotal;
+  const extrasTotal = extraCosts.reduce((sum, item) => sum + parseCurrency(item.priceStr), 0);
+  const subtotal = Math.max(0, servicesTotal + extrasTotal);
   const finalAmount = subtotal;
   const depositAmount = Number(depositAmountStr.replace(/\D/g, '') || 0);
 
@@ -100,17 +100,22 @@ export default function QuoteMakerPage({ editingShow, onClearEdit }) {
       subtotal, discountAmount: 0, finalAmount, depositAmount
     };
 
-    if (editingShow) {
-      // Cập nhật show hiện tại, giữ lại trạng thái
-      await updateShow(editingShow.id, {
-        ...editingShow,
-        ...showData,
-      });
-      setToastMessage('Đã cập nhật báo giá thành công!');
-    } else {
-      // Tạo show mới
-      await addShow(showData);
-      setToastMessage('Lưu thông tin thành công!');
+    try {
+      if (editingShow) {
+        // Cập nhật show hiện tại
+        await updateShow(editingShow.id, {
+          ...editingShow,
+          ...showData,
+        });
+        setToastMessage('Đã cập nhật báo giá thành công!');
+      } else {
+        // Tạo show mới
+        await addShow(showData);
+        setToastMessage('Tạo bảng báo giá thành công!');
+      }
+    } catch (err) {
+      console.warn("Lưu lịch sử show gặp sự cố (tiếp tục tạo báo giá):", err);
+      setToastMessage('Tạo bảng báo giá thành công!');
     }
     
     setShowExportOptions(true);

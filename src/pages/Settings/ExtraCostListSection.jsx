@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Edit2, Trash2, Plus } from 'lucide-react';
-import { formatCurrency } from '../../utils/formatCurrency';
+import { formatCurrency, parseCurrency } from '../../utils/formatCurrency';
 import ExtraCostModal from './ExtraCostModal';
 
 export default function ExtraCostListSection({ extraCostTemplates, setExtraCostTemplates }) {
@@ -43,13 +43,15 @@ export default function ExtraCostListSection({ extraCostTemplates, setExtraCostT
 
       <div className="space-y-3">
         {extraCostTemplates.map(item => {
-          const price = Number((item.priceStr || '0').replace(/\D/g, '') || 0);
+          const price = parseCurrency(item.priceStr);
           return (
             <div key={item.id} className="bg-[rgba(22,38,32,0.8)] border border-pt-text/10 rounded-2xl p-4 flex items-center justify-between relative">
               <div className="flex-1 pr-14">
                 <h3 className="text-pt-text font-bold text-[14px] leading-snug">{item.name}</h3>
-                {price > 0 && (
-                  <span className="text-pt-gold font-medium text-[13px]">+{formatCurrency(price)}</span>
+                {price !== 0 && (
+                  <span className={`font-medium text-[13px] ${price < 0 ? 'text-red-400 font-semibold' : 'text-pt-gold'}`}>
+                    {price < 0 ? formatCurrency(price) : `+${formatCurrency(price)}`}
+                  </span>
                 )}
               </div>
               <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-3">
